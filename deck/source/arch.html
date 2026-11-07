@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box} body{margin:0;width:1600px;height:600px;font-family:Calibri,Carlito,Arial,sans-serif;background:#fff;color:#1F1F24}
+.wrap{padding:28px 36px;display:grid;grid-template-columns:270px 30px 1fr 30px 300px;gap:0;height:100%}
+.col h4{margin:0 0 10px;font-size:15px;letter-spacing:1.5px;color:#D40000}
+.box{border-radius:12px;padding:12px 14px;margin-bottom:12px;background:#F3F4F6;font-size:15px;line-height:1.35}
+.box b{display:block;font-size:18px;margin-bottom:3px}
+.red{background:#FDECEC;border:2px solid #D40000}
+.dark{background:#1F1F24;color:#fff}
+.green{background:#E8F5EC;border:2px solid #1E7E34}
+.arrow{display:flex;align-items:center;justify-content:center;font-size:28px;color:#9CA3AF}
+.core{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.core .box{margin:0}
+.band{grid-column:1/3}
+small{color:#5F6368;font-size:13.5px}
+</style></head><body><div class="wrap">
+<div class="col"><h4>OWNER &amp; PARTNER</h4>
+ <div class="box"><b>Customer app</b>React PWA on any phone · 10 Indian languages + Hinglish · voice in, read-aloud out</div>
+ <div class="box"><b>WhatsApp</b>Meta Cloud API · signed webhook · same advisor, buttons and lists · order updates with delivered / read receipts · STATUS, RESCHEDULE, PROBLEM</div>
+ <div class="box"><b>Partner console</b>Assisted mode with QR hand-off · counter QR referrals · leads the advisor could not close, scored</div>
+ <div class="box dark"><b>HTTPS</b>nginx + Let's Encrypt · FastAPI on one small VM · works with no AI key</div>
+</div>
+<div class="arrow">⇄</div>
+<div class="col"><h4>ACCEL SAATHI SERVICE (FastAPI)</h4>
+ <div class="core">
+  <div class="box red"><b>1 · Understand</b>The owner's words become a profile: type, city, staff, sites, needs. Open-source gpt-oss (prototype on Groq; production in Accel's private cloud), Gemini fallback; one call per turn; personal data tokenised first</div>
+  <div class="box red"><b>2 · Check, 3 · Rank, 4 · Level</b>Catalogue rules (eligibility, dependencies, prices) → ranked by what similar Accel customers bought and asked for (business type blended with segment) → Basic / Recommended / Complete</div>
+  <div class="box"><b>Grounded reply</b>BM25 over 47 knowledge sections, source shown · price guard drops any ₹ not in the quote · known terms answered from fixed cards</div>
+  <div class="box"><b>Smart KYC</b>GSTIN + Udyam registry lookup · DigiLocker · Aadhaar OTP or Accel mobile KYC · on-device OCR (RapidOCR) with checksum re-read · 20+ checks, each with a fix</div>
+  <div class="box"><b>Orders &amp; tracker</b>E-sign · 7 stages with per-service ETA · install slot booking · WhatsApp update at every stage · tickets</div>
+  <div class="box"><b>Partners</b>Owner consent by code on her own phone · 30-day commission protection on her verified number · commission ½ at go-live, ½ at 6 months</div>
+  <div class="box band"><b>Lead score</b>Logistic regression on 5,000 leads (AUC 0.71, top 10% convert 2.1×) ranks the chats that did not close, with a next best action for field sales</div>
+ </div>
+</div>
+<div class="arrow">⇄</div>
+<div class="col"><h4>DATA &amp; PRIVACY</h4>
+ <div class="box"><b>Store: every record encrypted</b>Every record sealed with AES-256-GCM; phone-number keys replaced by HMAC tokens · sessions, KYC fields (no images), orders, audit log</div>
+ <div class="box"><b>Reference data</b>Product catalogue · mock GST and Udyam registries · Q2 leads</div>
+ <div class="box green"><b>DPDP by design</b>Consent per purpose, versioned · photos read then discarded (hash kept) · IDs and numbers masked everywhere · marketing off by default · erase on request · audit of every check</div>
+ <div class="box green"><b>Tokenised over the internet</b>Phone, GSTIN, PAN, Aadhaar, e-mail and names become [TOKENS] before any AI call; images never leave</div>
+</div>
+</div></body></html>

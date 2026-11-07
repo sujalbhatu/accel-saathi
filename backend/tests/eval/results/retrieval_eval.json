@@ -1,0 +1,498 @@
+{
+ "questions": 83,
+ "chunks": 47,
+ "retrieval": {
+  "bm25": {
+   "all": {
+    "n": 77,
+    "recall@1": 0.545,
+    "recall@4": 0.649,
+    "mrr@10": 0.6
+   },
+   "by_type": {
+    "faq": {
+     "n": 23,
+     "recall@1": 0.826,
+     "recall@4": 1.0,
+     "mrr@10": 0.902
+    },
+    "multilingual": {
+     "n": 24,
+     "recall@1": 0.167,
+     "recall@4": 0.292,
+     "mrr@10": 0.234
+    },
+    "paraphrase": {
+     "n": 12,
+     "recall@1": 0.25,
+     "recall@4": 0.25,
+     "mrr@10": 0.279
+    },
+    "product": {
+     "n": 18,
+     "recall@1": 0.889,
+     "recall@4": 0.944,
+     "mrr@10": 0.917
+    }
+   },
+   "by_lang": {
+    "bn": {
+     "n": 2,
+     "recall@1": 0.0,
+     "recall@4": 0.0,
+     "mrr@10": 0.0
+    },
+    "en": {
+     "n": 53,
+     "recall@1": 0.717,
+     "recall@4": 0.811,
+     "mrr@10": 0.766
+    },
+    "gu": {
+     "n": 1,
+     "recall@1": 0.0,
+     "recall@4": 0.0,
+     "mrr@10": 0.0
+    },
+    "hi": {
+     "n": 6,
+     "recall@1": 0.167,
+     "recall@4": 0.167,
+     "mrr@10": 0.167
+    },
+    "hinglish": {
+     "n": 6,
+     "recall@1": 0.5,
+     "recall@4": 0.833,
+     "mrr@10": 0.685
+    },
+    "kn": {
+     "n": 1,
+     "recall@1": 0.0,
+     "recall@4": 0.0,
+     "mrr@10": 0.0
+    },
+    "ml": {
+     "n": 1,
+     "recall@1": 0.0,
+     "recall@4": 0.0,
+     "mrr@10": 0.0
+    },
+    "mr": {
+     "n": 2,
+     "recall@1": 0.0,
+     "recall@4": 0.0,
+     "mrr@10": 0.0
+    },
+    "pa": {
+     "n": 1,
+     "recall@1": 0.0,
+     "recall@4": 0.0,
+     "mrr@10": 0.0
+    },
+    "ta": {
+     "n": 3,
+     "recall@1": 0.0,
+     "recall@4": 0.333,
+     "mrr@10": 0.167
+    },
+    "te": {
+     "n": 1,
+     "recall@1": 0.0,
+     "recall@4": 0.0,
+     "mrr@10": 0.0
+    }
+   },
+   "misses": [
+    {
+     "id": "prd13",
+     "type": "product",
+     "lang": "en",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "par01",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": 9,
+     "top4": [
+      "eligibility#products-that-need-an-internet-line",
+      "product#P06",
+      "product#P05",
+      "product#P12"
+     ]
+    },
+    {
+     "id": "par02",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": null,
+     "top4": [
+      "install#help-and-tickets",
+      "kyc#documents-needed",
+      "product#P15",
+      "product#P14"
+     ]
+    },
+    {
+     "id": "par03",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": null,
+     "top4": [
+      "buying#changing-the-bundle"
+     ]
+    },
+    {
+     "id": "par04",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": null,
+     "top4": [
+      "install#how-long-it-takes",
+      "product#P20",
+      "product#P25",
+      "product#P13"
+     ]
+    },
+    {
+     "id": "par05",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": null,
+     "top4": [
+      "buying#how-prices-work",
+      "kyc#fastest-way-digilocker-and-aadhaar-otp",
+      "install#after-ordering",
+      "kyc#uploading-photos"
+     ]
+    },
+    {
+     "id": "par06",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": 8,
+     "top4": [
+      "product#P07",
+      "eligibility#team-size-and-locations",
+      "product#P24",
+      "product#P21"
+     ]
+    },
+    {
+     "id": "par07",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": null,
+     "top4": [
+      "privacy#owner-s-rights",
+      "kyc#if-a-check-fails",
+      "kyc#checks-we-run"
+     ]
+    },
+    {
+     "id": "par08",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": 9,
+     "top4": [
+      "buying#how-prices-work",
+      "eligibility#products-that-need-an-internet-line",
+      "product#P07",
+      "product#P08"
+     ]
+    },
+    {
+     "id": "par10",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "hin05",
+     "type": "multilingual",
+     "lang": "hinglish",
+     "rank": 9,
+     "top4": [
+      "product#P13",
+      "kyc#checks-we-run",
+      "buying#how-prices-work",
+      "product#P09"
+     ]
+    },
+    {
+     "id": "hi01",
+     "type": "multilingual",
+     "lang": "hi",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "hi02",
+     "type": "multilingual",
+     "lang": "hi",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "hi03",
+     "type": "multilingual",
+     "lang": "hi",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "hi04",
+     "type": "multilingual",
+     "lang": "hi",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "hi05",
+     "type": "multilingual",
+     "lang": "hi",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "mr01",
+     "type": "multilingual",
+     "lang": "mr",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "mr02",
+     "type": "multilingual",
+     "lang": "mr",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "ta02",
+     "type": "multilingual",
+     "lang": "ta",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "ta03",
+     "type": "multilingual",
+     "lang": "ta",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "bn01",
+     "type": "multilingual",
+     "lang": "bn",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "bn02",
+     "type": "multilingual",
+     "lang": "bn",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "te01",
+     "type": "multilingual",
+     "lang": "te",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "gu01",
+     "type": "multilingual",
+     "lang": "gu",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "kn01",
+     "type": "multilingual",
+     "lang": "kn",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "ml01",
+     "type": "multilingual",
+     "lang": "ml",
+     "rank": null,
+     "top4": []
+    },
+    {
+     "id": "pa01",
+     "type": "multilingual",
+     "lang": "pa",
+     "rank": null,
+     "top4": []
+    }
+   ]
+  },
+  "bm25+expand": {
+   "all": {
+    "n": 77,
+    "recall@1": 0.766,
+    "recall@4": 0.935,
+    "mrr@10": 0.845
+   },
+   "by_type": {
+    "faq": {
+     "n": 23,
+     "recall@1": 0.696,
+     "recall@4": 0.957,
+     "mrr@10": 0.808
+    },
+    "multilingual": {
+     "n": 24,
+     "recall@1": 0.792,
+     "recall@4": 0.958,
+     "mrr@10": 0.875
+    },
+    "paraphrase": {
+     "n": 12,
+     "recall@1": 0.583,
+     "recall@4": 0.75,
+     "mrr@10": 0.667
+    },
+    "product": {
+     "n": 18,
+     "recall@1": 0.944,
+     "recall@4": 1.0,
+     "mrr@10": 0.972
+    }
+   },
+   "by_lang": {
+    "bn": {
+     "n": 2,
+     "recall@1": 0.5,
+     "recall@4": 1.0,
+     "mrr@10": 0.75
+    },
+    "en": {
+     "n": 53,
+     "recall@1": 0.755,
+     "recall@4": 0.925,
+     "mrr@10": 0.832
+    },
+    "gu": {
+     "n": 1,
+     "recall@1": 1.0,
+     "recall@4": 1.0,
+     "mrr@10": 1.0
+    },
+    "hi": {
+     "n": 6,
+     "recall@1": 0.833,
+     "recall@4": 1.0,
+     "mrr@10": 0.917
+    },
+    "hinglish": {
+     "n": 6,
+     "recall@1": 1.0,
+     "recall@4": 1.0,
+     "mrr@10": 1.0
+    },
+    "kn": {
+     "n": 1,
+     "recall@1": 1.0,
+     "recall@4": 1.0,
+     "mrr@10": 1.0
+    },
+    "ml": {
+     "n": 1,
+     "recall@1": 1.0,
+     "recall@4": 1.0,
+     "mrr@10": 1.0
+    },
+    "mr": {
+     "n": 2,
+     "recall@1": 0.5,
+     "recall@4": 1.0,
+     "mrr@10": 0.75
+    },
+    "pa": {
+     "n": 1,
+     "recall@1": 1.0,
+     "recall@4": 1.0,
+     "mrr@10": 1.0
+    },
+    "ta": {
+     "n": 3,
+     "recall@1": 0.333,
+     "recall@4": 0.667,
+     "mrr@10": 0.5
+    },
+    "te": {
+     "n": 1,
+     "recall@1": 1.0,
+     "recall@4": 1.0,
+     "mrr@10": 1.0
+    }
+   },
+   "misses": [
+    {
+     "id": "faq18",
+     "type": "faq",
+     "lang": "en",
+     "rank": 6,
+     "top4": [
+      "kyc#documents-needed",
+      "kyc#fastest-way-digilocker-and-aadhaar-otp",
+      "privacy#purpose-and-minimisation",
+      "kyc#uploading-photos"
+     ]
+    },
+    {
+     "id": "par02",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": null,
+     "top4": [
+      "install#help-and-tickets",
+      "kyc#documents-needed",
+      "product#P15",
+      "product#P14"
+     ]
+    },
+    {
+     "id": "par04",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": null,
+     "top4": [
+      "install#how-long-it-takes",
+      "product#P20",
+      "product#P25",
+      "product#P13"
+     ]
+    },
+    {
+     "id": "par07",
+     "type": "paraphrase",
+     "lang": "en",
+     "rank": null,
+     "top4": [
+      "privacy#owner-s-rights",
+      "kyc#if-a-check-fails",
+      "kyc#checks-we-run"
+     ]
+    },
+    {
+     "id": "ta03",
+     "type": "multilingual",
+     "lang": "ta",
+     "rank": null,
+     "top4": []
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,51 @@
+name: tests
+
+on:
+  push:
+    branches: [main, advisor-2]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # No AI keys and no data key in CI: every suite runs on the built-in rules, offline.
+      LLM_API_KEY: ""
+      GROQ_API_KEY: ""
+      DATA_KEY: ""
+      PYTHONUTF8: "1"
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - run: pip install -r requirements.txt
+      - name: Search test (knowledge base, 10 languages)
+        run: python -m tests.run_retrieval_eval
+      - name: Retrieval evaluation (83 owner questions, BM25 vs BM25 + expansion; report)
+        run: python -m tests.eval.run_rag_eval
+      - name: Advisor scenarios
+        run: python -m tests.run_advisor_scenarios
+      - name: Language checks
+        run: python -m tests.run_language_checks
+      - name: Chat fixes (language switch, bad answers, "What?", "all of them", long selections)
+        run: python -m tests.run_chat_fixes
+      - name: Ranking back-test
+        run: python -m tests.run_ranking_eval
+      - name: Privacy checks
+        run: python -m tests.run_privacy_checks
+      - name: WhatsApp orders
+        run: python -m tests.run_whatsapp_orders
+      - name: Partner flows
+        run: python -m tests.run_partner_flows
+      - name: KYC flows
+        run: python -m tests.run_kyc_flows
+      - name: KYC document pack (12 specimens, checked against the answer key)
+        run: python -m tests.run_kyc_pack

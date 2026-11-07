@@ -1,0 +1,83 @@
+{"id": "faq01", "type": "faq", "lang": "en", "q": "What documents do I need for KYC?", "gold": ["kyc#documents-needed"]}
+{"id": "faq02", "type": "faq", "lang": "en", "q": "Can I do KYC without uploading photos?", "gold": ["kyc#fastest-way-digilocker-and-aadhaar-otp"]}
+{"id": "faq03", "type": "faq", "lang": "en", "q": "How long does installation take?", "gold": ["install#how-long-it-takes"]}
+{"id": "faq04", "type": "faq", "lang": "en", "q": "Is the price shown with GST or without?", "gold": ["buying#how-prices-work"]}
+{"id": "faq05", "type": "faq", "lang": "en", "q": "What is the difference between a 12 and 24 month contract?", "gold": ["buying#12-or-24-months"]}
+{"id": "faq06", "type": "faq", "lang": "en", "q": "Can I change my bundle after I see the quote?", "gold": ["buying#changing-the-bundle"]}
+{"id": "faq07", "type": "faq", "lang": "en", "q": "What are the steps after I accept the quote?", "gold": ["buying#steps-to-order", "install#after-ordering"]}
+{"id": "faq08", "type": "faq", "lang": "en", "q": "Which products need a GSTIN?", "gold": ["eligibility#gstin"]}
+{"id": "faq09", "type": "faq", "lang": "en", "q": "Is 1 Gbps fibre available in my small town?", "gold": ["eligibility#city-tier", "product#P03"]}
+{"id": "faq10", "type": "faq", "lang": "en", "q": "Can a 5 person shop get a leased line?", "gold": ["eligibility#team-size-and-locations", "product#P05"]}
+{"id": "faq11", "type": "faq", "lang": "en", "q": "Can I buy a static IP without an internet connection?", "gold": ["eligibility#products-that-need-an-internet-line", "product#P11"]}
+{"id": "faq12", "type": "faq", "lang": "en", "q": "Who books the technician visit?", "gold": ["install#booking-the-technician"]}
+{"id": "faq13", "type": "faq", "lang": "en", "q": "How do I raise a complaint after installation?", "gold": ["install#help-and-tickets"]}
+{"id": "faq14", "type": "faq", "lang": "en", "q": "What if fibre is not available at my shop?", "gold": ["install#no-fibre-at-the-site", "product#P04"]}
+{"id": "faq15", "type": "faq", "lang": "en", "q": "How should I take photos of my documents?", "gold": ["kyc#uploading-photos"]}
+{"id": "faq16", "type": "faq", "lang": "en", "q": "What checks do you run on my documents?", "gold": ["kyc#checks-we-run"]}
+{"id": "faq17", "type": "faq", "lang": "en", "q": "My GST certificate was rejected, what now?", "gold": ["kyc#if-a-check-fails"]}
+{"id": "faq18", "type": "faq", "lang": "en", "q": "Do you read my documents before I agree?", "gold": ["privacy#consent-first"]}
+{"id": "faq19", "type": "faq", "lang": "en", "q": "Do you keep the photos of my documents?", "gold": ["privacy#purpose-and-minimisation"]}
+{"id": "faq20", "type": "faq", "lang": "en", "q": "Can I delete my data?", "gold": ["privacy#owner-s-rights"]}
+{"id": "faq21", "type": "faq", "lang": "en", "q": "Does the AI see my Aadhaar card?", "gold": ["privacy#ai-and-data"]}
+{"id": "faq22", "type": "faq", "lang": "en", "q": "Is there a one-time setup fee?", "gold": ["buying#how-prices-work"]}
+{"id": "faq23", "type": "faq", "lang": "en", "q": "Can I see the status of my order?", "gold": ["install#after-ordering", "install#help-and-tickets"]}
+{"id": "prd01", "type": "product", "lang": "en", "q": "How fast is Biz Fibre 300?", "gold": ["product#P02"]}
+{"id": "prd02", "type": "product", "lang": "en", "q": "What does the toll-free number cost?", "gold": ["product#P13"]}
+{"id": "prd03", "type": "product", "lang": "en", "q": "Tell me about the WhatsApp Business API", "gold": ["product#P15"]}
+{"id": "prd04", "type": "product", "lang": "en", "q": "How many SMS do I get in the SMS pack?", "gold": ["product#P14"]}
+{"id": "prd05", "type": "product", "lang": "en", "q": "What is managed SD-WAN?", "gold": ["product#P10"]}
+{"id": "prd06", "type": "product", "lang": "en", "q": "How much cloud backup storage do I get?", "gold": ["product#P17"]}
+{"id": "prd07", "type": "product", "lang": "en", "q": "Does the website plan include a domain?", "gold": ["product#P18"]}
+{"id": "prd08", "type": "product", "lang": "en", "q": "How many days of recording does the CCTV keep?", "gold": ["product#P23"]}
+{"id": "prd09", "type": "product", "lang": "en", "q": "What is in the business postpaid 599 plan?", "gold": ["product#P08"]}
+{"id": "prd10", "type": "product", "lang": "en", "q": "Is antivirus available for my shop PCs?", "gold": ["product#P20"]}
+{"id": "prd11", "type": "product", "lang": "en", "q": "What does the managed firewall do?", "gold": ["product#P21"]}
+{"id": "prd12", "type": "product", "lang": "en", "q": "Do you have GPS trackers for my delivery vans?", "gold": ["product#P25"]}
+{"id": "prd13", "type": "product", "lang": "en", "q": "Can I monitor my factory machines?", "gold": ["product#P24"]}
+{"id": "prd14", "type": "product", "lang": "en", "q": "What is the SLA on the 100 Mbps leased line?", "gold": ["product#P06"]}
+{"id": "prd15", "type": "product", "lang": "en", "q": "Do you have business email on my own domain?", "gold": ["product#P16"]}
+{"id": "prd16", "type": "product", "lang": "en", "q": "Can I take card payments on a tablet?", "gold": ["product#P19"]}
+{"id": "prd17", "type": "product", "lang": "en", "q": "Do you offer IVR and call recording?", "gold": ["product#P12"]}
+{"id": "prd18", "type": "product", "lang": "en", "q": "What is the price of Biz Fibre 100?", "gold": ["product#P01"]}
+{"id": "par01", "type": "paraphrase", "lang": "en", "q": "My internet keeps dropping in the evening, what can keep me online?", "gold": ["product#P09"]}
+{"id": "par02", "type": "paraphrase", "lang": "en", "q": "Someone stole from my shop last month, what can help?", "gold": ["product#P23"]}
+{"id": "par03", "type": "paraphrase", "lang": "en", "q": "Customers keep asking for the wifi password", "gold": ["product#P22"]}
+{"id": "par04", "type": "paraphrase", "lang": "en", "q": "I want customers to reach me on chat with my product list", "gold": ["product#P15"]}
+{"id": "par05", "type": "paraphrase", "lang": "en", "q": "All my accounts are on one old computer, I'm scared of losing them", "gold": ["product#P17"]}
+{"id": "par06", "type": "paraphrase", "lang": "en", "q": "I miss calls when my staff are busy with customers", "gold": ["product#P12", "product#P13"]}
+{"id": "par07", "type": "paraphrase", "lang": "en", "q": "I can't see what is happening at my other branches", "gold": ["product#P10", "product#P23"]}
+{"id": "par08", "type": "paraphrase", "lang": "en", "q": "When will the engineer come to fit the line?", "gold": ["install#booking-the-technician", "install#how-long-it-takes"]}
+{"id": "par09", "type": "paraphrase", "lang": "en", "q": "Do I have to visit an office with paper forms?", "gold": ["kyc#fastest-way-digilocker-and-aadhaar-otp", "buying#steps-to-order"]}
+{"id": "par10", "type": "paraphrase", "lang": "en", "q": "Is my personal information safe with you?", "gold": ["privacy#purpose-and-minimisation", "privacy#ai-and-data", "privacy#consent-first"]}
+{"id": "par11", "type": "paraphrase", "lang": "en", "q": "I don't have a registered business number, can I still buy?", "gold": ["eligibility#gstin"]}
+{"id": "par12", "type": "paraphrase", "lang": "en", "q": "There is no cable connection in my area", "gold": ["install#no-fibre-at-the-site", "product#P04"]}
+{"id": "hin01", "type": "multilingual", "lang": "hinglish", "q": "KYC ke liye kaun se documents chahiye?", "gold": ["kyc#documents-needed"]}
+{"id": "hin02", "type": "multilingual", "lang": "hinglish", "q": "Installation mein kitne din lagenge?", "gold": ["install#how-long-it-takes"]}
+{"id": "hin03", "type": "multilingual", "lang": "hinglish", "q": "Dukaan mein chori hoti hai, camera chahiye", "gold": ["product#P23"]}
+{"id": "hin04", "type": "multilingual", "lang": "hinglish", "q": "Price mein GST shamil hai kya?", "gold": ["buying#how-prices-work"]}
+{"id": "hin05", "type": "multilingual", "lang": "hinglish", "q": "Mere paas GST number nahi hai, kya main le sakta hoon?", "gold": ["eligibility#gstin"]}
+{"id": "hin06", "type": "multilingual", "lang": "hinglish", "q": "Internet band ho jata hai, backup chahiye", "gold": ["product#P09"]}
+{"id": "hi01", "type": "multilingual", "lang": "hi", "q": "केवाईसी के लिए कौन से दस्तावेज़ चाहिए?", "gold": ["kyc#documents-needed"]}
+{"id": "hi02", "type": "multilingual", "lang": "hi", "q": "इंस्टॉलेशन में कितने दिन लगेंगे?", "gold": ["install#how-long-it-takes"]}
+{"id": "hi03", "type": "multilingual", "lang": "hi", "q": "दुकान के लिए कैमरा चाहिए", "gold": ["product#P23"]}
+{"id": "hi04", "type": "multilingual", "lang": "hi", "q": "क्या मेरा डेटा सुरक्षित है?", "gold": ["privacy#purpose-and-minimisation", "privacy#ai-and-data", "privacy#consent-first"]}
+{"id": "hi05", "type": "multilingual", "lang": "hi", "q": "इंटरनेट बंद हो जाए तो क्या होगा?", "gold": ["product#P09"]}
+{"id": "hi06", "type": "multilingual", "lang": "hi", "q": "12 और 24 महीने में क्या फर्क है?", "gold": ["buying#12-or-24-months"]}
+{"id": "mr01", "type": "multilingual", "lang": "mr", "q": "केवायसीसाठी कोणती कागदपत्रे लागतात?", "gold": ["kyc#documents-needed"]}
+{"id": "mr02", "type": "multilingual", "lang": "mr", "q": "दुकानासाठी सीसीटीव्ही कॅमेरा हवा आहे", "gold": ["product#P23"]}
+{"id": "ta01", "type": "multilingual", "lang": "ta", "q": "KYC க்கு என்ன ஆவணங்கள் தேவை?", "gold": ["kyc#documents-needed"]}
+{"id": "ta02", "type": "multilingual", "lang": "ta", "q": "கடைக்கு கேமரா வேண்டும்", "gold": ["product#P23"]}
+{"id": "ta03", "type": "multilingual", "lang": "ta", "q": "நிறுவல் எத்தனை நாட்கள் ஆகும்?", "gold": ["install#how-long-it-takes"]}
+{"id": "bn01", "type": "multilingual", "lang": "bn", "q": "দোকানের জন্য সিসিটিভি ক্যামেরা চাই", "gold": ["product#P23"]}
+{"id": "bn02", "type": "multilingual", "lang": "bn", "q": "কেওয়াইসির জন্য কী কী কাগজ লাগবে?", "gold": ["kyc#documents-needed"]}
+{"id": "te01", "type": "multilingual", "lang": "te", "q": "షాపుకి సీసీటీవీ కెమెరా కావాలి", "gold": ["product#P23"]}
+{"id": "gu01", "type": "multilingual", "lang": "gu", "q": "દુકાન માટે સીસીટીવી કેમેરા જોઈએ છે", "gold": ["product#P23"]}
+{"id": "kn01", "type": "multilingual", "lang": "kn", "q": "ಅಂಗಡಿಗೆ ಸಿಸಿಟಿವಿ ಕ್ಯಾಮೆರಾ ಬೇಕು", "gold": ["product#P23"]}
+{"id": "ml01", "type": "multilingual", "lang": "ml", "q": "കടയ്ക്ക് സിസിടിവി ക്യാമറ വേണം", "gold": ["product#P23"]}
+{"id": "pa01", "type": "multilingual", "lang": "pa", "q": "ਦੁਕਾਨ ਲਈ ਸੀਸੀਟੀਵੀ ਕੈਮਰਾ ਚਾਹੀਦਾ ਹੈ", "gold": ["product#P23"]}
+{"id": "oos01", "type": "out_of_scope", "lang": "en", "q": "Who won the cricket match yesterday?", "gold": []}
+{"id": "oos02", "type": "out_of_scope", "lang": "en", "q": "Can you give me a loan for my shop?", "gold": []}
+{"id": "oos03", "type": "out_of_scope", "lang": "en", "q": "Do you offer a free iPhone with the plan?", "gold": []}
+{"id": "oos04", "type": "out_of_scope", "lang": "en", "q": "What is the GST rate on medicines?", "gold": []}
+{"id": "oos05", "type": "out_of_scope", "lang": "hinglish", "q": "Mujhe accountant chahiye GST return file karne ke liye", "gold": []}
+{"id": "oos06", "type": "out_of_scope", "lang": "en", "q": "Can you install solar panels on my roof?", "gold": []}

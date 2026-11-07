@@ -1,0 +1,70 @@
+[
+  {
+    "id": "v01_open",
+    "text": "This is Priya. She runs a small pharmacy in Jaipur. Five days ago, she'd never heard of Accel Saathi. Today, her whole shop runs on Accel. And she never made a single phone call."
+  },
+  {
+    "id": "v02_problem",
+    "text": "Last Saturday, UPI failed at rush hour, and she lost customers to the shop next door. So she opened Accel Saathi, and told it what was wrong, in one line."
+  },
+  {
+    "id": "v03_gstin",
+    "text": "It found her shop on the GST registry, and asked before using it. Two quick taps, and it knows her business."
+  },
+  {
+    "id": "v04_needs",
+    "text": "Then it turned her problems into a plan. Billing that won't drop. Cameras, for the theft. And backup internet, for when the line goes down."
+  },
+  {
+    "id": "v05_why",
+    "text": "And it shows its reasoning: what she said, what the catalogue allows, and what real Accel customers actually bought. Every rupee comes from the price list, never from the AI."
+  },
+  {
+    "id": "v06_objection",
+    "text": "Then she says what every owner says: it's too expensive. A desperate salesperson would argue. Saathi gives her choices, each with a price."
+  },
+  {
+    "id": "v07_recommend",
+    "text": "She asks which one it recommends. It answers with her own words, and asks for the order."
+  },
+  {
+    "id": "v08_kyc",
+    "text": "One clear monthly price. Then KYC: her consent, DigiLocker, and an Aadhaar OTP. About two minutes. No paper. No office."
+  },
+  {
+    "id": "v09_fraud",
+    "text": "And when a document is wrong, it says so, in plain words."
+  },
+  {
+    "id": "v10_tracker",
+    "text": "She picks her own installation slot, and every service gets a date."
+  },
+  {
+    "id": "v11_whatsapp",
+    "text": "Every step reaches her on WhatsApp. Want an update? She types STATUS. No call centre."
+  },
+  {
+    "id": "v12_lang",
+    "text": "All of this works in ten Indian languages, typed or spoken."
+  },
+  {
+    "id": "v12b_chain",
+    "text": "It handles chains too. Five restaurants, each outlet set up for its size, all on one bill, and every outlet tracked to go-live."
+  },
+  {
+    "id": "v13_partner",
+    "text": "And when an owner wants a person, a local partner who speaks her language takes over, and the sale stays theirs."
+  },
+  {
+    "id": "v14_funnel",
+    "text": "Every quarter, Accel spends thirty-five lakh rupees on small-business leads it never wins. One in three walks away because of the journey: the visits, the paperwork, the waiting."
+  },
+  {
+    "id": "v15_impact",
+    "text": "Saathi fixes the journey. Live in a week, not eighteen days. If half of them stay, the same leads bring twice the customers, at half the cost each."
+  },
+  {
+    "id": "v16_close",
+    "text": "Accel Saathi. Every small business, online in one conversation. From Team TouristGuide, NIT Jamshedpur."
+  }
+]

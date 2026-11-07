@@ -1,0 +1,14 @@
+[
+ {"id": "s01_hook", "text": "Every quarter, Accel gets five thousand small-business leads. Only seven in a hundred go live. And those take seventeen days, and three phone calls chasing status."},
+ {"id": "s02_intro", "text": "Meet Accel Saathi. A small business gets online in one conversation, on the phone, in its own language."},
+ {"id": "s03_gstin", "text": "Priya runs Coral Medicals, a pharmacy in Jaipur. She types one line, with her GST number. Saathi finds her on the GST registry, and checks first: is this your business?"},
+ {"id": "s04_pains", "text": "No product codes. It asks about her shop, like a good salesperson would. UPI fails at rush hour? It ticks billing and backup internet. A theft last month? Cameras."},
+ {"id": "s05_why", "text": "Five services, one monthly price, and the reasons, in her own words. The ranking is learned from three hundred and sixty-eight real Accel customers. Every rupee comes from the catalogue, never from the AI."},
+ {"id": "s06_objection", "text": "Too expensive? It doesn't cut her bundle behind her back. It gives her choices, each with a price: a lighter bundle, twenty-four months, or her own budget."},
+ {"id": "s07_kyc", "text": "She goes ahead. Consent is one switch per purpose. DigiLocker pulls her GST record, an Aadhaar OTP checks her, and in about two minutes, she is verified. No paper. No office visit."},
+ {"id": "s08_tracker", "text": "Then, a tracker instead of phone calls. She picks her installation slot, and every stage reaches her on WhatsApp. One bill, one number, live in about five days."},
+ {"id": "s09_lang", "text": "The same advisor works in ten Indian languages, typed or spoken, in the app and on WhatsApp."},
+ {"id": "s10_partner", "text": "Partners are not replaced. A partner starts the chat, the owner confirms on her own phone, and the sale stays the partner's."},
+ {"id": "s11_tech", "text": "Under the hood: the AI understands, the rules decide, and personal data is encrypted, and turned into tokens, before any AI sees it. Ninety-one advisor checks pass, with the AI on and off."},
+ {"id": "s12_close", "text": "Same leads. Twice the customers, at half the cost each. Accel Saathi. Try it live, at udyam dot openforge dot online."}
+]

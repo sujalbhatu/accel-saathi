@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy policy · Accel Saathi</title>
+<style>
+  body { font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1d2433; background: #fff;
+         max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 26px; margin-bottom: 4px; } h2 { font-size: 19px; margin-top: 28px; }
+  .muted { color: #5b6476; font-size: 14px; } li { margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<h1>Privacy policy</h1>
+<p class="muted">Accel Saathi, our answer to Project Udyam Digital · built by team TouristGuide, NIT Jamshedpur, for the Airtel Sync 2026 case
+competition · last updated 31 October 2026</p>
+
+<p>Accel Saathi is a student prototype that helps a small business choose internet, phone and business services,
+verify its documents and track its order, in the app or on WhatsApp. "Accel Telecom" is the fictional operator from
+the case brief. No real connection is sold, and no payment is taken.</p>
+
+<h2>What we collect, and why</h2>
+<ul>
+  <li><b>Chat messages</b> you send to the advisor (in the app or on WhatsApp), to recommend a bundle and answer your
+    questions.</li>
+  <li><b>Business details</b> you give: type of business, city, team size, number of sites, GSTIN. Used only for the
+    recommendation and the quote.</li>
+  <li><b>KYC documents and fields</b> (GST certificate, Udyam certificate, address proof), only after you consent, and
+    only to check them against the registry.</li>
+  <li><b>Your mobile number</b>, only if you agree to WhatsApp order updates. It is used for nothing else, is stored
+    apart from the order, and is shown masked (last 4 digits) everywhere, including our logs.</li>
+</ul>
+
+<h2>WhatsApp</h2>
+<p>When you message our WhatsApp number, Meta delivers the message to our server so the advisor can answer. If you
+placed an order and agreed to updates, we send you a message at each stage of the order. You can reply STATUS,
+RESCHEDULE or PROBLEM. We answer about an order only to the numbers linked to it.</p>
+
+<h2>AI</h2>
+<p>Some messages are passed to an AI model (Google Gemini or Groq) to understand free text. Prices and products are
+always decided by fixed rules, never by the AI. Before any text leaves for the AI, your phone number, GSTIN, PAN, Aadhaar, e-mail and business name are replaced with tokens such as [PHONE_1], and put back only in the reply you see. We never send document images to the AI. In production the same open-source model runs inside Accel's own cloud.</p>
+
+<h2>Who sees your data</h2>
+<p>Only the project team, for running and improving the prototype. We do not sell or share your data, and we do not use
+it for advertising.</p>
+
+<h2>How long we keep it, and deleting it</h2>
+<p>Data is kept while the prototype runs, and the whole prototype database is deleted after the competition ends.
+In the app you can erase a conversation that has no order placed. To delete anything else, including WhatsApp chats,
+send "DELETE MY DATA" to our WhatsApp number, and the team removes your data within 7 days.</p>
+
+<h2>Security</h2>
+<p>Your details are encrypted where they are stored (AES-256-GCM), so a copy of our database shows nothing readable, and records looked up by your phone number are stored under a coded key instead of the number. All traffic uses HTTPS. WhatsApp webhooks are checked against Meta's signature. Keys are kept out of the code.</p>
+</body>
+</html>
