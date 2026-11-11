@@ -131,10 +131,10 @@ def rank_of(found: list[dict], gold: list[str]) -> int | None:
     return None
 
 
-def score(query_of, questions=None) -> dict:
+def score(ranked, questions=None) -> dict:
     ranks, misses = [], []
     for lang, q, gold in questions or QUESTIONS:
-        r = rank_of(knowledge.search(query_of(q), k=len(knowledge.chunks())), gold)
+        r = rank_of(ranked(q), gold)
         ranks.append((lang, r))
         if not r or r > K:
             misses.append((lang, q, r))
@@ -148,24 +148,28 @@ def score(query_of, questions=None) -> dict:
             "mrr": sum(1 / r for _, r in ranks if r) / n, "misses": misses, "by_lang": by_lang}
 
 
-def live_query(q: str) -> str:
-    return knowledge.expand(q, rules_understand(q, "chat").get("intent"), needs_in(q))
+def plain_search(q: str) -> list[dict]:
+    return knowledge.search(q, k=len(knowledge.chunks()))
+
+
+def live_search(q: str) -> list[dict]:  # what the advisor really runs
+    return knowledge.find(q, rules_understand(q, "chat").get("intent"), needs_in(q), k=len(knowledge.chunks()))
 
 
 def main():
-    plain = score(lambda q: q)
-    live = score(live_query)
+    plain = score(plain_search)
+    live = score(live_search)
     print(f"Search test: {len(QUESTIONS)} owner questions in {len({l for l, _, _ in QUESTIONS})} languages, "
           f"{len(knowledge.chunks())} knowledge chunks, top {K} sent to the AI.\n")
     print(f"{'method':46s} hit@1  hit@{K}   MRR")
-    for name, r in (("BM25 on the owner's words", plain), ("BM25 + what the rules understood (live)", live)):
+    for name, r in (("BM25 on the owner's words", plain), ("Hybrid search, as the advisor runs it (live)", live)):
         print(f"{name:46s} {r['hit1']:5.0%} {r['hitk']:6.0%} {r['mrr']:5.2f}")
     print("\nhit@4 by language (live): " + ", ".join(f"{l} {h}/{n}" for l, (n, h) in live["by_lang"].items()))
     if live["misses"]:
         print("\nMissed by the live setup (rank of first right section):")
         for lang, q, r in live["misses"]:
             print(f"  [{lang}] {q}  -> {r or 'not found'}")
-    hp, hl = score(lambda q: q, HELD_OUT), score(live_query, HELD_OUT)
+    hp, hl = score(plain_search, HELD_OUT), score(live_search, HELD_OUT)
     print(f"\nHeld-out ({len(HELD_OUT)} questions written after the fixes, not tuned on): hit@{K} plain "
           f"{hp['hitk']:.0%}, live {hl['hitk']:.0%}; MRR plain {hp['mrr']:.2f}, live {hl['mrr']:.2f}")
     for lang, q, r in hl["misses"]:

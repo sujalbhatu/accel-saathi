@@ -396,7 +396,7 @@ def selling():
           {"P19", "P09"} <= set(state(r["recommendation"])["ids"]), r.get("stage"))
 
     sid = advisor.start("en")["session_id"]
-    r = advisor.message(sid, text="I have a small shop in Indore with 3 people")
+    r = advisor.message(sid, text="I have a small bakery in Indore with 3 people")  # the next question is about GST
     r = advisor.message(sid, text="mobile hotspot")
     check("an answer to another question is kept, not \"didn't catch that\"",
           "didn't catch" not in " ".join(r["messages"]) and advisor._profile(advisor.store.get("session", sid)).current_internet == "hotspot",

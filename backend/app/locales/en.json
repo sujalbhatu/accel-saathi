@@ -435,7 +435,18 @@
   "r_conn_small_site": "A lighter line for a smaller outlet, so you don't pay for speed it won't use.",
   "chip_go": "✓ Go ahead",
   "cheaper_floor_pick": "Everything left is something you picked, so I won't take it out on my own. Ways to a lower price:",
-  "lang_switched": "Sure, let's continue in English."
+  "lang_switched": "Sure, let's continue in English.",
+  "guard_injection": "I can't change my rules or my prices because a message asks me to. I can help you choose services for your business and show you the published price.",
+  "guard_others_data": "I can't share details of any other customer or business. I only work with what you tell me about your own.",
+  "guard_misuse": "I can't help with that. Accel services can't be used for unsolicited or misleading calls and messages, or with someone else's documents. Business SMS needs DLT registration and your customers' consent. If I've misunderstood, tell me what your business does.",
+  "guard_abuse": "I'm sorry this has been frustrating. I can have a person call you, or tell me what went wrong and I'll fix it here.",
+  "guard_offtopic": "That's outside what I can help with. I'm your Accel business advisor: I can set up internet, phones, billing, CCTV and more for your business.",
+  "guard_scale": "{n} is more than the small-business plans I can set up here. Accel's enterprise team gives a business of that size a custom quote. If the number was a typo, just tell me the right one.",
+  "guard_discount": "I can't give discounts or waive fees. Every price here is the published price, the same for every customer. These are the real ways to pay less:",
+  "guard_discount_early": "I can't give discounts or waive fees: every price is the published price, the same for every customer. Once I know your business, I'll show you the lowest-priced bundle that does the job.",
+  "guard_promise": "I can't promise more than the plan states. What I can tell you: your bundle should be live in about {days} days after KYC, and you book the technician's slot yourself in the tracker.",
+  "guard_promise_early": "I can't promise more than the plan states. I'll give you the exact number of days to go live along with your bundle.",
+  "aadhaar_hidden": "For your safety I've hidden the Aadhaar number you typed. I never need it in chat: your ID is checked only in the verification step, with your consent."
  },
  "needs": {
   "payments": "Billing & UPI/card payments",

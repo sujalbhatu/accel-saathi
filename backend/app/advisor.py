@@ -15,7 +15,7 @@ import json
 import os
 import re
 
-from . import assistant, cards, knowledge, pains, ranker, store
+from . import assistant, cards, guard, knowledge, pains, privacy, ranker, store
 from .data import gstin_registry, udyam_by_name
 from .extract import clean_llm_facts, extract
 from .i18n import LANGS, need_label, t
@@ -372,7 +372,8 @@ def _explain(p: Profile, rec: dict, lang: str, levels: dict | None = None) -> li
     business = p.business_name or _local(lang, "bt", p.business_type) or rec["segment_name"]
     msgs = [t(lang, "summary", business=business, city=_local(lang, "city", p.city) or t(lang, "your_city"),
               employees=p.employees or 1,
-              count=len(q["lines"]), monthly=f"{q['monthly']:,}", days=q["activation_days"])]
+              count=len(q["lines"]), monthly=f"{q['monthly']:,}", days=q["activation_days"])
+            .replace("with 1 people", "with 1 person")]
     yours = []
     if p.current_internet in CURRENT_CHOICES:
         yours.append(t(lang, f"cur_{p.current_internet}"))
@@ -433,6 +434,10 @@ def _public_profile(p: Profile) -> dict:
 _PHONE = re.compile(r"(?<!\d)(?:\+?91[\s-]?)?([6-9]\d{9})(?!\d)")
 _YES = re.compile(r"^\s*(?:yes|yeah|yup|haan|han|ha|हाँ|हां|होय|हो|ஆம்)(?=$|[\s!.,?])", re.I)
 _NO = re.compile(r"^\s*(?:no|nope|nahi|nahin|नहीं|नही|नाही|இல்லை)(?=$|[\s!.,?])", re.I)
+# answers to "do you have a GST number?" that mean "not for now"
+_NOT_YET = re.compile(r"\bnot yet\b|\bappl(?:ied|ying)\b|\bpending\b|\bawaited\b|in process|under process|abhi nahi|aaya nahi|"
+                      r"nahi (?:hai|aaya|mila)|don'?t have|do not have|नहीं है|नहीं आया|नाही|નથી|নেই|ਨਹੀਂ|లేదు|ಇಲ್ಲ|ഇല്ല", re.I)
+_LATER = re.compile(r"\blater\b|\bbaad (?:mein|me|mai)\b|\bnot now\b|don'?t remember|yaad nahi|\bskip\b|बाद में|नंतर", re.I)
 
 
 def _rerun(s: dict, p: Profile) -> dict:
@@ -1017,7 +1022,19 @@ def _ask_answer(intent: str, s: dict, p: Profile, u: dict, text: str, lang: str,
                 sources: list) -> tuple[list[str], list[dict] | None]:
     """Answers the app writes itself, with exact numbers, for questions about the bundle. Never changes it."""
     if not s.get("recommendation"):
-        return _rules_answer(intent if intent in ("q_privacy", "q_total") else "question", text, s, lang, sources)
+        return _rules_answer(intent if intent in ("q_privacy", "q_total", "q_discount", "q_promise") else "question",
+                             text, s, lang, sources)
+    if intent == "q_discount":  # no discounts, said plainly, then every real way to pay less with its exact price
+        ways, chips = _ways_down(s, p, lang, trim=True)
+        return [t(lang, "guard_discount"), ways], chips + [_chip(t(lang, "chip_keep_go"), "proceed"),
+                                                             _chip(t(lang, "chip_call"), "callback")]
+    if intent == "q_promise":  # no promises beyond the plan; what is true instead
+        msgs = [t(lang, "guard_promise", days=s["recommendation"]["quote"]["activation_days"])]
+        offer: list[str] = []
+        if "failover" in (u.get("offer") or []):
+            more, offer = _down_answer(s, p, lang, sources)
+            msgs += more
+        return msgs, _done_chips(s, lang, offer=offer)
     if intent == "ask_skip":
         return _ask_skip(s, p, u.get("about") or [], lang, sources)
     if intent == "ask_term":
@@ -1052,10 +1069,13 @@ def _rules_answer(intent: str | None, text: str, s: dict, lang: str, sources: li
     sources = sources if sources is not None else []
     sources += knowledge.RULE_SOURCES.get(intent or "", [])
     p = _profile(s)
+    if intent in ("q_discount", "q_promise"):
+        return [t(lang, f"guard_{intent[2:]}" if rec else f"guard_{intent[2:]}_early", days=rec["quote"]["activation_days"] if rec else 0)], None
     if intent == "q_docs":
         return [t(lang, "faq_kyc")], None
-    if intent == "q_gst":
-        return [t(lang, "faq_gst")], None
+    if intent == "q_gst":  # name what they asked about first: "Can I get WhatsApp without GST?" deserves a straight answer
+        named = [pid for need in assistant.needs_in(text) for pid, n in _NEED_OF.items() if n == need and products()[pid].requires_gstin]
+        return [t(lang, "blocked_line", name=cards.plain(lang, pid), why=t(lang, "why_gstin")) for pid in named[:2]] + [t(lang, "faq_gst")], None
     if intent == "q_privacy":
         return _safety_answer(s, p, text, lang, sources)[0], None
     if intent == "q_time":
@@ -1096,17 +1116,61 @@ def _restart(s: dict) -> dict:
 
 
 _SALES = ("obj_price", "obj_think", "obj_someone", "q_recommend", "q_unsure", "q_sites")
+_OWN_BUSINESS = re.compile(
+    r"\b(?:i|we)\s+(?:run|own|have|operate|manage|am|are|do|also|actually|started|opened)\b|\b(?:i'm|we're)\b|\bactually\b|"
+    r"\b(?:my|our)\s+(?:business|shop|store|company|firm|work)\b|\bnot an?\b|\b(?:mera|meri|mere|hamara|hamari|hum|main)\b|"
+    r"मेरा|मेरी|मेरे|हमारा|हमारी|हम\s|मैं\s|माझ|आमच|என்|எங்கள்|నా\s|మా\s|ನನ್ನ|ನಮ್ಮ|എന്റെ|ഞങ്ങളുടെ|আমার|আমাদের|મારો|મારી|અમારો|ਮੇਰਾ|ਮੇਰੀ|ਸਾਡਾ", re.I)
+
+
+def _same_business(stage: str, p: Profile, text: str, facts: dict) -> dict:
+    """A passing word is not a change of business. Once the bundle is built, "print the quote" or "the salon next
+    door" changes nothing unless the owner is talking about their own business."""
+    if facts.get("business_type") and stage == "done" and not _OWN_BUSINESS.search(text):
+        facts.pop("business_type")
+    return facts
+
+
+def _guarded(s: dict, p: Profile, kind: str, text: str) -> dict:
+    """A message the safety layer stopped: answer from fixed text, change nothing, and carry on where we were."""
+    lang = s["lang"] if s.get("lang_pinned") else assistant.turn_lang(text, s["lang"])
+    store.audit("advisor", f"guard:{kind}", s["id"])
+    if kind == "misuse":  # a person should look at this lead before anything is sold
+        s["risk"] = sorted(set(s.get("risk") or []) | {"misuse"})
+    msgs = [t(lang, f"guard_{kind}")]
+    call = [_chip(t(lang, "chip_call"), "callback")]
+    if s["stage"] == "done":
+        return {"messages": msgs, "chips": (call if kind == "abuse" else []) + [c for c in _done_chips(s, lang) if c["value"] != "callback"]}
+    if s["stage"] == "needs":
+        return {"messages": msgs, "chips": _pain_chips(p, lang), **_needs_payload(p, lang)}
+    out = _continue(s, p, msgs, lang)
+    if kind == "abuse":
+        out["chips"] = call + list(out.get("chips") or [])
+    return out
+
+
+def _too_big(s: dict, hit: tuple[str, int], lang: str) -> dict:
+    """A business beyond small-business plans, or a typo: don't price it, offer the enterprise team."""
+    store.audit("advisor", "guard:scale", s["id"], f"{hit[0]}={hit[1]}")
+    s["awaiting_phone"] = True
+    return {"messages": [t(lang, "guard_scale", n=f"{hit[1]:,}"), t(lang, "callback_ask")],
+            "chips": _done_chips(s, lang) if s["stage"] == "done" else []}
 
 
 def _understand(s: dict, p: Profile, text: str) -> tuple[dict, dict]:
     """One LLM call when configured (facts + action + answer), always backed by the keyword rules."""
     stage = s["stage"]
+    kind = guard.screen(text)
+    if kind in guard.POLICY:  # "give me 50% off", "guarantee 100% uptime": answered by the app, never by the model
+        store.audit("advisor", f"guard:{kind}", s["id"])
+        return ({"action": "none", "add_needs": [], "remove_needs": [], "term_months": None, "budget": None, "reply": "",
+                 "intent": f"q_{kind}", "about": [], "offer": assistant.needs_in(text) if kind == "promise" else []}, {})
     rules = assistant.rules_understand(text, stage)
-    rule_facts = extract(text, smart={})
+    rule_facts = _same_business(stage, p, text, extract(text, smart={}))
     if s.get("pending_slot") == "current" or stage in ("chat", "needs"):
         cur = current_from_text(text, strict=s.get("pending_slot") != "current")
         if not cur and stage in ("chat", "needs") and not p.current_internet and len(text.split()) <= 5 and not re.search(r"\d", text) \
-                and s.get("pending_slot") not in ("business_type", "city"):
+                and s.get("pending_slot") not in ("business_type", "city") \
+                and not (s.get("pending_slot") == "gstin" and (_NOT_YET.search(text) or _LATER.search(text))):
             cur = current_from_text(text, strict=False)  # "mobile hotspot" answered out of turn: keep it
         if cur:
             rule_facts["current_internet"] = cur
@@ -1141,7 +1205,7 @@ def _understand(s: dict, p: Profile, text: str) -> tuple[dict, dict]:
             u["action"], u["add_needs"] = "none", []
         u.setdefault("option", rules.get("option"))
         u.setdefault("small_sites", rules.get("small_sites"))
-        facts = extract(text, smart=clean_llm_facts(smart.get("facts") or {}))
+        facts = _same_business(stage, p, text, extract(text, smart=clean_llm_facts(smart.get("facts") or {})))
         if facts.get("gstin") and facts["gstin"].upper() not in re.sub(r"[\s-]", "", text.upper()):
             facts.pop("gstin")  # the AI repeated the GSTIN from the profile: looking it up again would loop on "is this you?"
         if "current_internet" in rule_facts:
@@ -1174,6 +1238,7 @@ def message(session_id: str, text: str = "", slot: str | None = None, value=None
         while parts and len(", ".join(head + parts[:1])) <= 220:
             head.append(parts.pop(0))
         shown = ", ".join(head) + (f" … +{len(parts)}" if parts else "") if head else shown[:300] + "…"
+    shown, aadhaar = privacy.hide_aadhaar(shown)  # the number is used for nothing and stored nowhere
     if shown:
         s["history"].append({"role": "user", "text": shown[:500]})
     extra: dict = {}
@@ -1200,6 +1265,7 @@ def message(session_id: str, text: str = "", slot: str | None = None, value=None
     elif slot == "gstin_confirm":
         out = _gstin_answer(s, p, str(value) == "yes", lang)
     elif slot and value is not None:
+        big = None
         if slot == "current" and str(value) in CURRENT_CHOICES:
             p.current_internet = str(value)
         elif slot == "gstin" and value == "skip":
@@ -1207,12 +1273,17 @@ def message(session_id: str, text: str = "", slot: str | None = None, value=None
         elif slot == "gstin" and value == "none":
             _apply(p, {"has_gstin": False}, lang, notes)
         elif slot in ("employees", "sites"):
-            setattr(p, slot, int(value))
+            n = int(value) if str(value).isdigit() else 0  # a button sends a number; anything else is ignored
+            big = guard.too_big({slot: n})
+            if n > 0 and not big:
+                setattr(p, slot, n)
         elif slot == "city":
-            _apply(p, {"city": str(value)}, lang, notes)
+            _apply(p, {"city": str(value)[:60]}, lang, notes)
         elif slot == "business_type":
-            p.business_type = str(value)
-        out = _continue(s, p, notes, lang)
+            p.business_type = str(value)[:60]
+        out = _too_big(s, big, lang) if big else _continue(s, p, notes, lang)
+    elif text and guard.screen(text) in guard.BLOCK:  # steering, abuse, misuse, other people's data, off-topic
+        out = _guarded(s, p, guard.screen(text), text)
     elif text and (asked := assistant.language_request(text)):  # "talk in English", "Hindi mai baat karo": switch, stay
         told = {k for k in extract(text, smart={}) if k in ("business_type", "city", "employees", "sites", "gstin")}
         if told:  # "I run a pharmacy in Pune, talk in English": switch, and keep what she told us
@@ -1239,6 +1310,9 @@ def message(session_id: str, text: str = "", slot: str | None = None, value=None
         p = _profile(s)
     else:
         _save_profile(s, p)
+    if aadhaar:
+        store.audit("advisor", "aadhaar_hidden_in_chat", s["id"])
+        out["messages"] = [t(s["lang"], "aadhaar_hidden")] + list(out["messages"])
     sources = s.pop("_sources", None) or []
     if sources:
         out["sources"] = sources
@@ -1297,6 +1371,8 @@ def _turn(s: dict, p: Profile, u: dict, facts: dict, text: str) -> dict:
         store.audit("advisor", "callback_requested", s["id"], f"phone=******{num[-4:]}")
         msgs.append(t(lang, "callback_ok", phone="******" + num[-4:]))
         return _continue(s, p, msgs, lang) if stage != "done" else {"messages": msgs, "chips": _done_chips(s, lang)}
+    if (hit := guard.too_big(facts)):  # "1000000 staff": never priced, handed to a person
+        return _too_big(s, hit, lang)
 
     if action == "restart":
         return _restart(s)
@@ -1357,14 +1433,20 @@ def _turn(s: dict, p: Profile, u: dict, facts: dict, text: str) -> dict:
     pending = s.get("pending_slot")
     if pending == "gstin_confirm" and text and not facts.get("gstin") and (_YES.search(text) or _NO.search(text)):
         return _gstin_answer(s, p, bool(_YES.search(text)), lang)
+    if pending == "gstin" and text and _LATER.search(text):  # "I'll give the number later": don't ask for it again now
+        s["asked_gstin_number"] = True
+        if p.has_gstin is None and "has_gstin" not in facts:
+            facts = {**facts, "has_gstin": False}
     chatter = u.get("intent") in ("greet", "question") or bool(u.get("reply"))
     if not facts and text and not answered and not chatter:
-        if pending == "gstin" and _NO.search(text):
+        if pending == "gstin" and (_NO.search(text) or _NOT_YET.search(text)):
             facts = {"has_gstin": False}
         elif pending == "gstin" and _YES.search(text):
             return {"messages": [t(lang, "ask_gstin_type")], "chips": _chips("gstin", lang)}
         elif pending in ("employees", "sites"):
             n = _first_number(text)
+            if n and (hit := guard.too_big({pending: n})):
+                return _too_big(s, hit, lang)
             if n:
                 facts = {pending: n}
         elif pending == "current":
@@ -1387,6 +1469,9 @@ def _turn(s: dict, p: Profile, u: dict, facts: dict, text: str) -> dict:
             msgs.append(t(lang, "noted"))  # an answer to something else: keep it, thank her, ask again
     elif text and not answered and not chatter:
         s["misses"] = s.get("misses", 0) + 1
+        if pending == "gstin" and s["misses"] >= 2:  # never ask a third time: carry on without one, it can be added later
+            _apply(p, {"has_gstin": False}, lang, msgs, s)
+            s["misses"] = 0
     if s.get("gstin_check") and stage != "done":  # "is this your business?" comes before anything else
         s["pending_slot"] = "gstin_confirm"
         return {"messages": msgs, "chips": _chips("gstin_confirm", lang)}
@@ -1415,7 +1500,8 @@ def _continue(s: dict, p: Profile, msgs: list[str], lang: str, missed: bool = Fa
         if missed and s.get("misses"):
             q = t(lang, "didnt_get", question=q)
         s["pending_slot"] = nxt
-        return {"messages": msgs + [q], "chips": _chips(nxt, lang)}
+        stuck = [_chip(t(lang, "chip_call"), "callback")] if missed and s.get("misses", 0) >= 2 else []  # offer a person
+        return {"messages": msgs + [q], "chips": _chips(nxt, lang) + stuck}
     if not p.current_internet and not s.get("asked_current") and s["stage"] == "chat":
         # what they use today: the brief asks for it, and it shapes how the bundle is explained
         s["asked_current"], s["pending_slot"] = True, "current"

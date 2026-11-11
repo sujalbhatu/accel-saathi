@@ -1,0 +1,26 @@
+{"id": "g01", "type": "paraphrase", "lang": "en", "q": "Staff keep opening random websites on the office network, can that be controlled?", "gold": ["product#P21"]}
+{"id": "g02", "type": "paraphrase", "lang": "en", "q": "I run three clinics and want to see all their connections on one screen", "gold": ["product#P10"]}
+{"id": "g03", "type": "paraphrase", "lang": "en", "q": "Patients sit for an hour in my waiting room and ask for internet", "gold": ["product#P22"]}
+{"id": "g04", "type": "paraphrase", "lang": "en", "q": "We upload big design files all day and the line chokes", "gold": ["product#P03", "product#P02", "product#P05"]}
+{"id": "g05", "type": "paraphrase", "lang": "en", "q": "I travel between cities a lot and need data on my phone", "gold": ["product#P08", "product#P07"]}
+{"id": "g06", "type": "paraphrase", "lang": "en", "q": "Can I watch my godown at night from home?", "gold": ["product#P23"]}
+{"id": "g07", "type": "paraphrase", "lang": "en", "q": "I want to take card and QR payments at the counter and print GST bills", "gold": ["product#P19"]}
+{"id": "g08", "type": "paraphrase", "lang": "en", "q": "Do I have to sign for a fixed period?", "gold": ["buying#12-or-24-months"]}
+{"id": "g09", "type": "paraphrase", "lang": "en", "q": "Is there any one-time charge on top of the monthly amount?", "gold": ["buying#how-prices-work"]}
+{"id": "g10", "type": "paraphrase", "lang": "en", "q": "My KYC failed because the name didn't match, what should I do?", "gold": ["kyc#if-a-check-fails", "kyc#checks-we-run"]}
+{"id": "g11", "type": "paraphrase", "lang": "en", "q": "Can I finish verification without scanning anything?", "gold": ["kyc#fastest-way-digilocker-and-aadhaar-otp"]}
+{"id": "g12", "type": "paraphrase", "lang": "en", "q": "Will I be told when each step of my order is done?", "gold": ["install#after-ordering", "install#help-and-tickets"]}
+{"id": "g13", "type": "typo", "lang": "en", "q": "hw mny days for fiber instalaton", "gold": ["install#how-long-it-takes", "product#P01"]}
+{"id": "g14", "type": "typo", "lang": "en", "q": "firewal price pls", "gold": ["product#P21"]}
+{"id": "g15", "type": "typo", "lang": "hinglish", "q": "backup internt ka rate kya h", "gold": ["product#P09"]}
+{"id": "g16", "type": "multilingual", "lang": "hinglish", "q": "kya aap mera aadhaar ka photo save karte ho", "gold": ["privacy#purpose-and-minimisation", "privacy#ai-and-data"]}
+{"id": "g17", "type": "multilingual", "lang": "hinglish", "q": "engineer ka time khud choose kar sakte hai kya", "gold": ["install#booking-the-technician"]}
+{"id": "g18", "type": "multilingual", "lang": "hi", "q": "क्या ईमेल की सुविधा मिलती है और उसकी कीमत क्या है?", "gold": ["product#P16"]}
+{"id": "g19", "type": "multilingual", "lang": "mr", "q": "जीएसटी नसेल तर कोणत्या सेवा मिळतात?", "gold": ["eligibility#gstin"]}
+{"id": "g20", "type": "multilingual", "lang": "bn", "q": "ইনস্টল করতে কত দিন লাগে?", "gold": ["install#how-long-it-takes"]}
+{"id": "g21", "type": "multilingual", "lang": "gu", "q": "કેવાયસી માટે કયા દસ્તાવેજ જોઈએ?", "gold": ["kyc#documents-needed"]}
+{"id": "g22", "type": "multilingual", "lang": "ta", "q": "என் தரவை நீக்க முடியுமா?", "gold": ["privacy#owner-s-rights"]}
+{"id": "g23", "type": "multilingual", "lang": "te", "q": "సీసీటీవీ కెమెరా ధర ఎంత?", "gold": ["product#P23"]}
+{"id": "g24", "type": "multilingual", "lang": "kn", "q": "ವಾಟ್ಸಾಪ್ ಬಿಸಿನೆಸ್ ಬೆಲೆ ಎಷ್ಟು?", "gold": ["product#P15"]}
+{"id": "g25", "type": "multilingual", "lang": "ml", "q": "ടെക്നീഷ്യൻ എപ്പോൾ വരും?", "gold": ["install#booking-the-technician", "install#how-long-it-takes"]}
+{"id": "g26", "type": "multilingual", "lang": "pa", "q": "ਕੇਵਾਈਸੀ ਲਈ ਕਿਹੜੇ ਦਸਤਾਵੇਜ਼ ਚਾਹੀਦੇ ਹਨ?", "gold": ["kyc#documents-needed"]}

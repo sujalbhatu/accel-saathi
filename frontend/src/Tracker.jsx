@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { api, inr } from './api.js'
 import { tr } from './i18n.js'
+import Icon, { ProductIcon } from './Icon.jsx'
 
 // What WhatsApp said happened to each update we sent (Meta reports sent, delivered and read)
 const DELIVERY = { sent: 'waSent', template: 'waSent', delivered: 'waDelivered', read: 'waRead', demo: 'waDemo',
@@ -33,7 +34,7 @@ export default function Tracker({ lang, initial, onNew, toast }) {
 
   if (!o) {
     return (
-      <main className="page">
+      <main className="page narrow">
         <h2>{tr(lang, 'trackTitle')}</h2>
         <div className="card">
           <label className="field"><span>{tr(lang, 'orderNo')}</span><input value={id} onChange={(e) => setId(e.target.value)} placeholder="e.g. AB1234ABCD" /></label>
@@ -47,20 +48,20 @@ export default function Tracker({ lang, initial, onNew, toast }) {
 
   const canBook = ['esigned', 'feasibility', 'scheduled'].includes(o.stage)
   return (
-    <main className="page" style={{ paddingBottom: 24 }}>
-      <div className="card">
+    <main className="page track">
+      <div className="card orderhead">
         <div className="row between"><div><div className="small muted">{tr(lang, 'orderNo')}</div><b style={{ fontSize: 18, letterSpacing: 0.5 }}>{o.id}</b></div>
           <div style={{ textAlign: 'right' }}><div className="small muted">{tr(lang, 'expected')}</div><b>{new Date(o.expected_activation).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</b></div></div>
         <div className="progress"><div style={{ width: `${o.progress}%` }} /></div>
         <div className="small muted">{o.business} · {o.city} · {inr(o.quote.monthly)}{tr(lang, 'perMonth')}</div>
-        {o.partner && <div className="small muted" style={{ marginTop: 4 }}>🤝 {tr(lang, 'helpedBy', { name: o.partner.name })}</div>}
+        {o.partner && <div className="small muted" style={{ marginTop: 4 }}><Icon name="handshake" size={14} /> {tr(lang, 'helpedBy', { name: o.partner.name })}</div>}
       </div>
 
       <div className="card">
         <ul className="timeline">
           {o.steps.map((s) => (
             <li key={s.key} className={(s.done ? 'done ' : '') + (s.current ? 'current' : '')}>
-              <span className="pt">{s.done && !s.current ? '✓' : ''}</span>
+              <span className="pt">{s.done && !s.current ? <Icon name="check" size={12} strokeWidth={3.2} /> : ''}</span>
               <div className="lbl">{s.label}</div>
               {s.at && <div className="ts">{new Date(s.at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>}
               {s.key === 'scheduled' && o.slot && <div className="ts">{tr(lang, 'slotIs', { slot: o.slot })}</div>}
@@ -80,7 +81,7 @@ export default function Tracker({ lang, initial, onNew, toast }) {
       <div className="card">
         <h3>{tr(lang, 'yourServices')}</h3>
         {o.items.map((it) => (
-          <div key={it.id} className="svc"><span>{it.plain || it.name}{it.qty > 1 ? ` × ${it.qty}` : ''}<br /><span className="small muted">{tr(lang, 'byDate', { date: new Date(it.eta).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) })}</span></span>
+          <div key={it.id} className="svc"><span className="ic"><ProductIcon id={it.id} size={17} /></span><span className="grow">{it.plain || it.name}{it.qty > 1 ? `\u00a0×\u00a0${it.qty}` : ''}<br /><span className="small muted">{tr(lang, 'byDate', { date: new Date(it.eta).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) })}</span></span>
             <span className={'status ' + it.status}>{tr(lang, 'item_' + it.status)}</span></div>
         ))}
       </div>
@@ -115,12 +116,12 @@ export default function Tracker({ lang, initial, onNew, toast }) {
           <button className="btn sm" disabled={ticket.trim().length < 3 || busy} onClick={() => act(() => api.ticket(o.id, ticket), 'Ticket raised').then(() => setTicket(''))}>{tr(lang, 'raise')}</button></div>
       </div>
 
-      <div className="demo">
+      <div className="demo wide">
         <b>{tr(lang, 'demo')}</b> · stands in for field-engineer and back-office updates.
         <button className="btn sm dark" style={{ marginLeft: 8 }} disabled={busy || o.stage === 'activated'} onClick={() => act(() => api.advance(o.id))}>{tr(lang, 'nextUpdate')}</button>
       </div>
       {error && <div className="notice" style={{ marginTop: 10 }}>{error}</div>}
-      <button className="btn ghost" style={{ marginTop: 12 }} onClick={onNew}>{tr(lang, 'newBundle')}</button>
+      <button className="btn ghost wide" style={{ marginTop: 12 }} onClick={onNew}>{tr(lang, 'newBundle')}</button>
     </main>
   )
 }

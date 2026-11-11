@@ -6,11 +6,15 @@
 Questions: tests/eval/rag_questions.jsonl, owner questions in English, Hinglish and 9 Indian scripts, each labelled
 with the knowledge chunk(s) that answer it (ids from app.knowledge.chunks()); "out_of_scope" questions have none.
 
-Retrieval, for two variants of the same BM25 index:
+Retrieval, for three methods over the same chunks:
   bm25         the owner's words as typed
-  bm25+expand  what the app really sends: the words plus English terms for the intent and needs the rules engine
-               understood (knowledge.expand), which is how Hindi or Tamil questions reach English documents
+  bm25+expand  the words plus English terms for the intent and needs the rules understood (the search until Nov 2026)
+  hybrid       what the app runs now (knowledge.find): stemmed BM25 and character 3-grams merged by reciprocal rank
+               fusion, over chunks indexed with the ways owners ask, widened with services and topics in 10 languages
 Metrics: recall@1 and recall@4 (a correct chunk in the top 1 / top 4; the AI is given the top 4) and MRR@10.
+Three question sets: rag_questions.jsonl (83, the set the search was tuned on), rag_questions_holdout.jsonl (41,
+written before the hybrid search and looked at once while building it) and rag_questions_holdout2.jsonl (26, written
+after it and never tuned on: the fair number).
 
 Answers (--answers), the AI step only (assistant.llm_understand, as the advisor calls it for a free-form question),
 all judged by deterministic checks, no LLM judge:
@@ -56,8 +60,8 @@ APP_LANG = {"hinglish": "hi"}
 NUM_UNIT = re.compile(r"(?:₹|rs\.?|inr)\s*([\d,]+)|([\d,.]+)\s*(?:mbps|gbps|gb|tb|days?|months?|din|दिन|महीने)", re.I)
 
 
-def load():
-    with open(os.path.join(HERE, "rag_questions.jsonl"), encoding="utf-8") as f:
+def load(name="rag_questions.jsonl"):
+    with open(os.path.join(HERE, name), encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
 
 
@@ -66,6 +70,8 @@ def ranked(q, variant):
     if variant == "bm25":
         return [c["id"] for c in knowledge.search(text, k=10)]
     intent = assistant.rules_understand(text, "done").get("intent")
+    if variant == "hybrid":
+        return [c["id"] for c in knowledge.find(text, intent, assistant.needs_in(text), k=10)]
     return [c["id"] for c in knowledge.search(knowledge.expand(text, intent, assistant.needs_in(text)), k=10)]
 
 
@@ -80,7 +86,7 @@ def score(rows):
 
 def retrieval(qs):
     out = {}
-    for variant in ("bm25", "bm25+expand"):
+    for variant in ("bm25", "bm25+expand", "hybrid"):
         rows = []
         for q in qs:
             if not q["gold"]:
@@ -107,7 +113,7 @@ def answers(qs):
     for q in qs:
         lang = APP_LANG.get(q["lang"], q["lang"])
         intent = assistant.rules_understand(q["q"], "done").get("intent")
-        found = knowledge.search(knowledge.expand(q["q"], intent, assistant.needs_in(q["q"])), k=4)
+        found = knowledge.find(q["q"], intent, assistant.needs_in(q["q"]), k=4)
         session = {"id": f"eval_{q['id']}", "profile": {}}
         t0 = time.monotonic()
         u = assistant.llm_understand(q["q"], lang, "done", None, {"business_type": "Pharmacy", "city": "Jaipur"}, None,
@@ -157,6 +163,18 @@ def main():
         print(f"{v:12s} {r['all']}")
         for t, s in r["by_type"].items():
             print(f"    {t:13s} {s}")
+    for name, label in (("rag_questions_holdout.jsonl", "held-out 1 (41, seen once while building)"),
+                        ("rag_questions_holdout2.jsonl", "held-out 2 (26, never tuned on)")):
+        r = retrieval(load(name))
+        result[f"retrieval_{name.split('.')[0].split('_')[-1]}"] = r
+        print(f"{label}: " + "; ".join(f"{v} r@1 {x['all']['recall@1']:.0%} r@4 {x['all']['recall@4']:.0%}" for v, x in r.items()))
+    main_set, fair = result["retrieval"], result["retrieval_holdout2"]
+    checks = [("hybrid finds the right source in the top 4 for at least 95% of the main set", main_set["hybrid"]["all"]["recall@4"] >= 0.95),
+              ("hybrid is at least as good as the old search on the main set", main_set["hybrid"]["all"]["recall@4"] >= main_set["bm25+expand"]["all"]["recall@4"]
+               and main_set["hybrid"]["all"]["recall@1"] >= main_set["bm25+expand"]["all"]["recall@1"]),
+              ("hybrid top-4 on the never-tuned set is at least 90%", fair["hybrid"]["all"]["recall@4"] >= 0.90)]
+    for name, ok in checks:
+        print(("PASS  " if ok else "FAIL  ") + name)
     if ANSWERS:
         if not llm.enabled():
             sys.exit("--answers needs LLM_API_KEY or GROQ_API_KEY")
@@ -165,6 +183,7 @@ def main():
         print(json.dumps(result["answers"], indent=1))
     with open(os.path.join(OUT, "rag_eval.json" if ANSWERS else "retrieval_eval.json"), "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=1)
+    sys.exit(0 if all(ok for _, ok in checks) else 1)
 
 
 if __name__ == "__main__":

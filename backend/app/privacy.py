@@ -112,3 +112,18 @@ def detokenize(text: str, mapping: dict[str, str]) -> str:
     for tok, value in mapping.items():
         text = text.replace(tok, value)
     return text
+
+
+def hide_aadhaar(text: str) -> tuple[str, bool]:
+    """An Aadhaar number typed into the chat is never kept: only its last four digits survive. Returns (text, found)."""
+    found = False
+
+    def swap(m: re.Match) -> str:
+        nonlocal found
+        digits = re.sub(r"\D", "", m.group(0))
+        if re.fullmatch(r"91[6-9]\d{9}", digits):  # a mobile number written with the country code
+            return m.group(0)
+        found = True
+        return "XXXX XXXX " + digits[-4:]
+
+    return dict(_PATTERNS)["AADHAAR"].sub(swap, text), found

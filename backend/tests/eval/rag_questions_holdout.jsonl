@@ -1,0 +1,41 @@
+{"id": "h01", "type": "paraphrase", "lang": "en", "q": "A customer walked out without paying and I have no proof", "gold": ["product#P23"]}
+{"id": "h02", "type": "paraphrase", "lang": "en", "q": "My shop wifi password is known to the whole street", "gold": ["product#P22"]}
+{"id": "h03", "type": "paraphrase", "lang": "en", "q": "When the net is down my billing stops, is there a standby?", "gold": ["product#P09"]}
+{"id": "h04", "type": "paraphrase", "lang": "en", "q": "I want one number customers can call for free", "gold": ["product#P13"]}
+{"id": "h05", "type": "paraphrase", "lang": "en", "q": "How do I send festival offers to all my customers' phones?", "gold": ["product#P14", "product#P15"]}
+{"id": "h06", "type": "paraphrase", "lang": "en", "q": "Our laptops got a virus last year, how do we protect them?", "gold": ["product#P20"]}
+{"id": "h07", "type": "paraphrase", "lang": "en", "q": "I need to know where my delivery vans are", "gold": ["product#P25"]}
+{"id": "h08", "type": "paraphrase", "lang": "en", "q": "Can people find my shop online with my own site?", "gold": ["product#P18"]}
+{"id": "h09", "type": "paraphrase", "lang": "en", "q": "We keep losing files when a computer dies", "gold": ["product#P17"]}
+{"id": "h10", "type": "paraphrase", "lang": "en", "q": "My staff use personal gmail, I want mail on our company name", "gold": ["product#P16"]}
+{"id": "h11", "type": "paraphrase", "lang": "en", "q": "Callers get a busy tone when two customers ring together", "gold": ["product#P12"]}
+{"id": "h12", "type": "paraphrase", "lang": "en", "q": "I want to know when a machine stops on the factory floor", "gold": ["product#P24"]}
+{"id": "h13", "type": "paraphrase", "lang": "en", "q": "No cable company reaches my lane, any wireless option?", "gold": ["product#P04", "install#no-fibre-at-the-site"]}
+{"id": "h14", "type": "paraphrase", "lang": "en", "q": "Is tax included in the price you show?", "gold": ["buying#how-prices-work"]}
+{"id": "h15", "type": "paraphrase", "lang": "en", "q": "Is it cheaper if I commit for two years?", "gold": ["buying#12-or-24-months"]}
+{"id": "h16", "type": "paraphrase", "lang": "en", "q": "Can I remove something after seeing the quote?", "gold": ["buying#changing-the-bundle"]}
+{"id": "h17", "type": "paraphrase", "lang": "en", "q": "Can I choose when the engineer visits?", "gold": ["install#booking-the-technician"]}
+{"id": "h18", "type": "paraphrase", "lang": "en", "q": "Who do I complain to if something breaks?", "gold": ["install#help-and-tickets"]}
+{"id": "h19", "type": "paraphrase", "lang": "en", "q": "Does the chatbot look at my Aadhaar photo?", "gold": ["privacy#ai-and-data"]}
+{"id": "h20", "type": "paraphrase", "lang": "en", "q": "My address proof is four months old, is that ok?", "gold": ["kyc#documents-needed", "kyc#checks-we-run"]}
+{"id": "h21", "type": "paraphrase", "lang": "en", "q": "Why can't I get 1 Gbps in my town?", "gold": ["eligibility#city-tier", "product#P03"]}
+{"id": "h22", "type": "paraphrase", "lang": "en", "q": "We are only 4 people, can we take a leased line?", "gold": ["eligibility#team-size-and-locations", "product#P05"]}
+{"id": "h23", "type": "typo", "lang": "en", "q": "wat docs needed 4 kyc", "gold": ["kyc#documents-needed"]}
+{"id": "h24", "type": "typo", "lang": "hinglish", "q": "instalation kitne din me hoga", "gold": ["install#how-long-it-takes"]}
+{"id": "h25", "type": "typo", "lang": "en", "q": "cctv camra price?", "gold": ["product#P23"]}
+{"id": "h26", "type": "typo", "lang": "en", "q": "whatsap bussiness api cost", "gold": ["product#P15"]}
+{"id": "h27", "type": "typo", "lang": "hinglish", "q": "tol free numbr chahiye kitna lagega", "gold": ["product#P13"]}
+{"id": "h28", "type": "multilingual", "lang": "hinglish", "q": "mera data delete ho sakta hai kya", "gold": ["privacy#owner-s-rights"]}
+{"id": "h29", "type": "multilingual", "lang": "hinglish", "q": "technician kab aayega, slot kaise book kare", "gold": ["install#booking-the-technician"]}
+{"id": "h30", "type": "multilingual", "lang": "hinglish", "q": "24 mahine lene se sasta padega kya", "gold": ["buying#12-or-24-months"]}
+{"id": "h31", "type": "multilingual", "lang": "hinglish", "q": "bina gst ke kya kya mil sakta hai", "gold": ["eligibility#gstin"]}
+{"id": "h32", "type": "multilingual", "lang": "hi", "q": "क्या मेरे दस्तावेज़ों की फोटो आपके पास रहती है?", "gold": ["privacy#purpose-and-minimisation"]}
+{"id": "h33", "type": "multilingual", "lang": "hi", "q": "इंटरनेट बंद होने पर क्या बैकअप मिलेगा?", "gold": ["product#P09"]}
+{"id": "h34", "type": "multilingual", "lang": "mr", "q": "इन्स्टॉलेशनला किती दिवस लागतात?", "gold": ["install#how-long-it-takes"]}
+{"id": "h35", "type": "multilingual", "lang": "bn", "q": "সিসিটিভি ক্যামেরার দাম কত?", "gold": ["product#P23"]}
+{"id": "h36", "type": "multilingual", "lang": "gu", "q": "વોટ્સએપ બિઝનેસ માટે GST જરૂરી છે?", "gold": ["product#P15", "eligibility#gstin"]}
+{"id": "h37", "type": "multilingual", "lang": "ta", "q": "டோல் ஃப்ரீ எண் விலை என்ன?", "gold": ["product#P13"]}
+{"id": "h38", "type": "multilingual", "lang": "te", "q": "వెబ్‌సైట్ కోసం ఎంత ఖర్చు అవుతుంది?", "gold": ["product#P18"]}
+{"id": "h39", "type": "multilingual", "lang": "kn", "q": "ಕೆವೈಸಿಗೆ ಯಾವ ದಾಖಲೆಗಳು ಬೇಕು?", "gold": ["kyc#documents-needed"]}
+{"id": "h40", "type": "multilingual", "lang": "ml", "q": "ഇൻസ്റ്റലേഷന് എത്ര ദിവസം എടുക്കും?", "gold": ["install#how-long-it-takes"]}
+{"id": "h41", "type": "multilingual", "lang": "pa", "q": "ਕੀ ਮੈਂ ਆਪਣਾ ਡਾਟਾ ਮਿਟਾ ਸਕਦਾ ਹਾਂ?", "gold": ["privacy#owner-s-rights"]}

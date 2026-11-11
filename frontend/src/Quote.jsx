@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { api, inr } from './api.js'
 import { tr } from './i18n.js'
 import ItemDetails from './Item.jsx'
+import Icon, { ProductIcon } from './Icon.jsx'
 
 const WHY = { tier: 'Only in tier-1 cities', employees: 'Needs a bigger team', sites: 'For 3+ locations', gstin: 'Needs an active GSTIN', dependency: 'Needs a broadband line' }
 
@@ -35,7 +36,7 @@ export default function Quote({ lang, session, rec, cart, setCart, onBack, onNex
 
   return (
     <>
-      <main className="page">
+      <main className="page quote">
         <h2>{tr(lang, 'bundle')}</h2>
         {q.notes?.some((n) => n.startsWith('added:')) && <div className="notice info">We added an internet line because some services need one.</div>}
         {q.blocked?.length > 0 && q.blocked.map((b) => (
@@ -44,6 +45,7 @@ export default function Quote({ lang, session, rec, cart, setCart, onBack, onNex
         <div className="card">
           {quote.lines.map((l) => (
             <div key={l.id} className="line">
+              <span className="ic"><ProductIcon id={l.id} size={18} /></span>
               <div>
                 <div className="name">{l.plain || l.name}{l.asked && <span className="badge">{tr(lang, 'youAsked')}</span>}</div>
                 <div className="small muted">{l.name} · {inr(l.unit_price)} {l.unit} · {l.contract_months} {tr(lang, 'months')}{l.setup ? ` · ${tr(lang, 'setup')} ${inr(l.setup)}` : ''}</div>
@@ -56,14 +58,14 @@ export default function Quote({ lang, session, rec, cart, setCart, onBack, onNex
                   <ItemDetails lang={lang} line={l} showWhy={false} />
                 </details>
               )}
-              <div className="row" style={{ gridColumn: '1 / -1', marginTop: 4 }}>
+              <div className="row ctl">
                 {l.unit !== 'per account' && l.unit !== 'per number' && l.unit !== 'per pack' && (
                   <div className="qty" aria-label="Quantity">
                     <button onClick={() => setQty(l.id, -1)} aria-label="Less">−</button><span>{l.qty}</span><button onClick={() => setQty(l.id, 1)} aria-label="More">+</button>
                   </div>
                 )}
                 <div className="spacer" />
-                <button className="link small" onClick={() => remove(l.id)}>{tr(lang, 'remove')}</button>
+                <button className="link small rm" onClick={() => remove(l.id)}><Icon name="trash" size={14} /> {tr(lang, 'remove')}</button>
               </div>
             </div>
           ))}
@@ -82,6 +84,7 @@ export default function Quote({ lang, session, rec, cart, setCart, onBack, onNex
             <h3>Recommended add-ons</h3>
             {suggested.map((s) => (
               <div key={s.id} className="addon">
+                <span className="ic"><ProductIcon id={s.id} size={17} /></span>
                 <div className="meta"><b>{s.plain || s.name}</b>{s.qty > 1 ? ` × ${s.qty}` : ''}<div className="small muted">{s.does || s.reason_text}</div></div>
                 <div style={{ textAlign: 'right' }}><div className="price small">{inr(s.monthly)}</div><button className="btn sm" onClick={() => add(s.id, s.qty)}>{tr(lang, 'add')}</button></div>
               </div>
@@ -93,6 +96,7 @@ export default function Quote({ lang, session, rec, cart, setCart, onBack, onNex
           <div className="row between"><h3>{tr(lang, 'addons')}</h3><button className="link small" onClick={() => setShowAll(!showAll)}>{showAll ? 'Show fewer' : `All ${addons.length}`}</button></div>
           {visibleAddons.map((a) => (
             <div key={a.id} className={'addon ' + (a.eligible ? '' : 'off')}>
+              <span className="ic"><ProductIcon id={a.id} size={17} /></span>
               <div className="meta"><b>{a.plain || a.name}</b><div className="small muted">{a.does || a.description}</div>
                 {!a.eligible && <div className="small" style={{ color: 'var(--bad)' }}>{tr(lang, 'notEligible')}: {WHY[a.why]}</div>}
               </div>
@@ -102,15 +106,15 @@ export default function Quote({ lang, session, rec, cart, setCart, onBack, onNex
           ))}
         </div>
         <p className="small muted">{tr(lang, 'gstNote')} Prices are within Accel's published range; longer contracts get the lower end.</p>
-        <button className="btn ghost" onClick={onBack}>← {tr(lang, 'backAdvisor')}</button>
+        <button className="btn ghost back" onClick={onBack}><Icon name="back" size={17} /> {tr(lang, 'backAdvisor')}</button>
       </main>
       <div className="bottombar">
         <div className="total">
-          <div><b>{inr(quote.monthly)}</b><span className="muted">{tr(lang, 'perMonth')}</span><div className="small muted">{tr(lang, 'plusGst')} = {inr(quote.monthly_with_gst)} · {tr(lang, 'setup')} {inr(quote.setup)}</div>
+          <div><b>{inr(quote.monthly)}</b><span className="muted per">{tr(lang, 'perMonth')}</span><div className="small muted">{tr(lang, 'plusGst')} = {inr(quote.monthly_with_gst)} · {tr(lang, 'setup')} {inr(quote.setup)}</div>
             {quote.setup > 0 && quote.first_bill && <div className="small muted">{tr(lang, 'firstBill', { amt: inr(quote.first_bill) })}</div>}</div>
           <div className="small muted" style={{ textAlign: 'right' }}>{quote.lines.length} {tr(lang, 'services')}<br />{tr(lang, 'liveIn')} ~{quote.activation_days} {tr(lang, 'days')}</div>
         </div>
-        <button className="btn" disabled={busy || !quote.lines.length} onClick={onNext}>{busy ? <span className="spinner" /> : tr(lang, 'toKyc')}</button>
+        <button className="btn" disabled={busy || !quote.lines.length} onClick={onNext}>{busy ? <span className="spinner" /> : <>{tr(lang, 'toKyc')} <Icon name="next" size={17} /></>}</button>
       </div>
     </>
   )

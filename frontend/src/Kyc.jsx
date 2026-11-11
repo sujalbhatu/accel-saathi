@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { api } from './api.js'
 import { tr } from './i18n.js'
+import Icon, { DocIcon } from './Icon.jsx'
 
-const ICON = { gst_certificate: '🧾', udyam_certificate: '🏭', signatory_id: '🪪', address_proof: '🏠' }
 const SOURCE = { digilocker: 'DigiLocker', gst_registry: 'GST registry', aadhaar_ekyc: 'Aadhaar e-KYC', accel_kyc: 'Accel KYC', upload: 'Photo' }
 
 // One fix for every problem: what the owner taps next, by the check that failed.
@@ -48,7 +48,7 @@ export default function Kyc({ lang, session, partner, onPartner, onBack, onNext,
   if (!k.consent?.accepted) {
     return (
       <>
-        <main className="page consent">
+        <main className="page consent narrow">
           <h2>{tr(lang, 'consentTitle')}</h2>
           <div className="card">
             <p className="small" style={{ marginTop: 0 }}>{tr(lang, 'consentIntro')}</p>
@@ -89,7 +89,7 @@ export default function Kyc({ lang, session, partner, onPartner, onBack, onNext,
             </div>
           )}
           {error && <div className="notice">{error}</div>}
-          <button className="btn ghost" onClick={onBack}>← Back</button>
+          <button className="btn ghost back" onClick={onBack}><Icon name="back" size={17} /> Back</button>
         </main>
         <div className="bottombar">
           <button className="btn" disabled={!agree || !!busy || (needsOwner && ownerCode.length !== 6)} onClick={() => run('consent', async () => {
@@ -132,11 +132,11 @@ export default function Kyc({ lang, session, partner, onPartner, onBack, onNext,
 
   return (
     <>
-      <main className="page">
+      <main className="page narrow">
         <h2>{tr(lang, 'kycTitle')}</h2>
 
         <div className="card">
-          <div className="row between"><h3>⚡ {tr(lang, 'fastest')}</h3></div>
+          <div className="row between"><h3><Icon name="zap" size={16} /> {tr(lang, 'fastest')}</h3></div>
           <p className="small muted" style={{ marginTop: 0 }}>{tr(lang, 'fastestSub')}</p>
           <button className="btn dark" disabled={!!busy} onClick={() => run('dl', () => api.digilocker(session))}>{busy === 'dl' ? <span className="spinner" /> : 'Fetch from DigiLocker'}</button>
         </div>
@@ -167,7 +167,7 @@ export default function Kyc({ lang, session, partner, onPartner, onBack, onNext,
             const issues = checksFor(dt).filter((c) => c.status !== 'pass')
             return (
               <div key={dt} className="doc">
-                <div className="ico">{ICON[dt]}</div>
+                <div className="ico"><DocIcon id={dt} size={19} /></div>
                 <div className="meta">
                   <div><b className="small">{k.labels[dt]}</b>{' '}
                     {!needed && <span className="tag">{tr(lang, dt === 'gst_certificate' ? 'notNeeded' : 'optional')}</span>}{' '}
@@ -175,15 +175,17 @@ export default function Kyc({ lang, session, partner, onPartner, onBack, onNext,
                   </div>
                   <div className="fields">{d ? Object.values(d.fields || {}).filter(Boolean).slice(0, 3).join(' · ') || 'Could not read' : 'Not added yet'}</div>
                 </div>
-                {d && <button className="link small" disabled={!!busy} onClick={() => run('rm-' + dt, () => api.removeDoc(session, dt))}>{tr(lang, 'remove')}</button>}
-                <label className="btn sm ghost" style={{ margin: 0 }}>
-                  {d ? tr(lang, 'retake') : tr(lang, 'upload')}
-                  <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => {
-                    const f = e.target.files?.[0]
-                    if (f) run('up-' + dt, () => api.upload(session, dt, f))
-                    e.target.value = ''
-                  }} />
-                </label>
+                <div className="acts">
+                  {d && <button className="link small" disabled={!!busy} onClick={() => run('rm-' + dt, () => api.removeDoc(session, dt))}>{tr(lang, 'remove')}</button>}
+                  <label className="btn sm ghost" style={{ margin: 0 }}>
+                    {d ? tr(lang, 'retake') : tr(lang, 'upload')}
+                    <input type="file" accept="image/*" capture="environment" hidden onChange={(e) => {
+                      const f = e.target.files?.[0]
+                      if (f) run('up-' + dt, () => api.upload(session, dt, f))
+                      e.target.value = ''
+                    }} />
+                  </label>
+                </div>
               </div>
             )
           })}
@@ -203,12 +205,13 @@ export default function Kyc({ lang, session, partner, onPartner, onBack, onNext,
         {res && (
           <>
             <div className={'decision ' + res.decision}>
-              {res.decision === 'approved' ? '✓ Verified' : res.decision === 'review' ? '! Verified, one item to note' : '✕ ' + res.fail_count + (res.fail_count === 1 ? ' item needs fixing' : ' items need fixing')}
+              <Icon name={res.decision === 'approved' ? 'verified' : res.decision === 'review' ? 'warn' : 'fail'} size={20} />
+              {res.decision === 'approved' ? 'Verified' : res.decision === 'review' ? 'Verified, one item to note' : res.fail_count + (res.fail_count === 1 ? ' item needs fixing' : ' items need fixing')}
             </div>
             <div className="card">
               {res.checks.map((c, i) => (
                 <div key={i} className={'result ' + c.status}>
-                  <span className="dot">{c.status === 'pass' ? '✓' : c.status === 'warn' ? '!' : '✕'}</span>
+                  <span className="dot"><Icon name={c.status === 'pass' ? 'ok' : c.status === 'warn' ? 'warn' : 'fail'} size={17} /></span>
                   <span>{c.message}{c.status !== 'pass' && <Fix c={c} />}</span>
                 </div>
               ))}
@@ -217,7 +220,7 @@ export default function Kyc({ lang, session, partner, onPartner, onBack, onNext,
           </>
         )}
         {error && <div className="notice">{error}</div>}
-        <button className="btn ghost" onClick={onBack}>← Back to bundle</button>
+        <button className="btn ghost back" onClick={onBack}><Icon name="back" size={17} /> Back to bundle</button>
         <p className="small muted" style={{ textAlign: 'center' }}>
           <button className="link small" onClick={async () => { if (window.confirm('Delete everything you have shared so far?')) { await api.erase(session).catch(() => {}); toast('Your data has been deleted.'); window.location.reload() } }}>{tr(lang, 'erase')}</button>
         </p>

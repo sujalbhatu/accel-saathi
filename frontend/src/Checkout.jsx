@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { api, inr } from './api.js'
 import { tr } from './i18n.js'
+import Icon from './Icon.jsx'
 
 export default function Checkout({ lang, session, cart, onBack, onPlaced }) {
   const [q, setQ] = useState(null)
@@ -25,7 +26,7 @@ export default function Checkout({ lang, session, cart, onBack, onPlaced }) {
 
   return (
     <>
-      <main className="page">
+      <main className="page narrow">
         <h2>{tr(lang, 'checkout')}</h2>
         {q && (
           <div className="card">
@@ -44,12 +45,12 @@ export default function Checkout({ lang, session, cart, onBack, onPlaced }) {
           <label className="check"><input type="checkbox" checked={wa} onChange={(e) => setWa(e.target.checked)} /> <span>{tr(lang, 'waUpdates')}</span></label>
         </div>
         <div className="card">
-          <h3>{tr(lang, 'esign')}</h3>
+          <h3><Icon name="lock" size={16} /> {tr(lang, 'esign')}</h3>
           <label className="check"><input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} /> <span>I accept the service agreement: {cart.term}-month term, prices fixed for the term, cancel any time after the term with 30 days' notice.</span></label>
           <label className="field" style={{ marginBottom: 0 }}><span>{tr(lang, 'otp')}</span><input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} inputMode="numeric" placeholder="6 digits (demo: any)" /></label>
         </div>
         {error && <div className="notice">{error}</div>}
-        <button className="btn ghost" onClick={onBack}>← Back</button>
+        <button className="btn ghost back" onClick={onBack}><Icon name="back" size={17} /> Back</button>
       </main>
       <div className="bottombar">
         <button className="btn" disabled={!valid || busy} onClick={place}>{busy ? <><span className="spinner" /> {tr(lang, 'placing')}</> : tr(lang, 'place')}</button>

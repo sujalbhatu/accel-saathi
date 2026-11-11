@@ -387,8 +387,10 @@ def kyc_samples():
 
 @app.get("/api/kyc/samples/{name}")
 def kyc_sample_image(name: str):
+    if not re.fullmatch(r"K\d{2}_[A-Za-z0-9_-]{1,60}", name):  # a specimen's own file name, nothing else
+        raise HTTPException(404, "No such sample")
     p = DATA_DIR / "kyc_documents" / f"{name}.png"
-    if not p.exists() or not p.stem.startswith("K"):
+    if not p.exists():
         raise HTTPException(404, "No such sample")
     return FileResponse(p)
 
@@ -663,13 +665,15 @@ def console_audit():
 
 # ---------- frontend ----------
 
-DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+DIST = (Path(__file__).resolve().parents[2] / "frontend" / "dist").resolve()
 if DIST.exists():
     app.mount("/assets", StaticFiles(directory=DIST / "assets"), name="assets")
 
     @app.get("/{path:path}", include_in_schema=False)
     def spa(path: str):
-        f = DIST / path
-        if path and f.is_file():
+        if path.startswith("api/"):
+            raise HTTPException(404, "Not found")
+        f = (DIST / path).resolve()
+        if path and f.is_file() and f.is_relative_to(DIST):  # never anything outside the built front end ("../../.env")
             return FileResponse(f)
         return FileResponse(DIST / "index.html")

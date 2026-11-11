@@ -215,7 +215,7 @@ def build_items(p: Profile) -> list[dict]:
         add(conn, sites - small, why)
         add(CONN_DOWNGRADE[conn], small, "conn_small_site")
     else:
-        add(conn, sites if p.segment == "multi" else 1, why)
+        add(conn, sites, why)  # the line is sold per site: a salon with two branches needs two
     if p.segment in ("micro",):
         add("P07", c["mobile_lines"], "mobile_micro")
     else:

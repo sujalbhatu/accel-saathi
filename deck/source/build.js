@@ -7,6 +7,7 @@ const { applyTheme } = require('/root/.claude/skills/synced/998f07f9-b9bf-423c-9
 const IMG = (f) => path.join(__dirname, 'img', f)
 const OUT = process.argv[2] || path.join(__dirname, 'TouristGuide_NIT_Jamshedpur.pptx')
 const LIVE = 'https://udyam.openforge.online'
+const REPO = process.env.REPO_URL || ''
 const VIDEO = process.env.VIDEO_URL || ''
 
 const THEME = {
@@ -105,6 +106,8 @@ const PH = 1376 / 816 // phone frame aspect (h / w)
   const VIDEO_SHORT = VIDEO.replace(/^https?:\/\//, '')
   if (VIDEO) txt(s, [run('► DEMO VIDEO (2½ min): ', { bold: true, color: 'FFFFFF', hyperlink: { url: VIDEO } }), run(VIDEO, { color: 'FF8A8A', underline: true, hyperlink: { url: VIDEO } })],
     { x: 0.62, y: 5.22, w: 4.8, h: 0.2, fontSize: 9, color: 'FF8A8A' })
+  if (REPO) txt(s, [run('► CODE + TESTS: ', { bold: true, color: 'FFFFFF', hyperlink: { url: REPO } }), run(REPO, { color: 'FF8A8A', underline: true, hyperlink: { url: REPO } })],
+    { x: 0.62, y: 5.4, w: 4.8, h: 0.18, fontSize: 8, color: 'FF8A8A' })
   if (VIDEO && !require('fs').existsSync(IMG('qr_video.png'))) throw new Error('run make_qr.js with the video link first')
   if (VIDEO) {  // the demo video card, beside the live app's: a QR plus the link written out, so it reads as a video
     s.addShape(pres.ShapeType.roundRect, { x: 5.0, y: 3.9, w: 2.6, h: 1.16, rectRadius: 0.08, fill: { color: 'FFFFFF' }, line: { color: 'FFFFFF', width: 0 } })
@@ -526,7 +529,7 @@ const PH = 1376 / 816 // phone frame aspect (h / w)
 {
   const s = pres.addSlide({ masterName: 'ANNEX' })
   s.addText('A1 · Architecture: the AI understands, rules decide, privacy is built in', { placeholder: 'title' })
-  s.addText('One FastAPI service behind HTTPS serves the app, the WhatsApp webhook and the partner console. Live at udyam.openforge.online. Code: github.com/sujalbhatu/udyam-digital (private; shared with the jury on request).', { placeholder: 'sub' })
+  s.addText('One FastAPI service behind HTTPS serves the app, the WhatsApp webhook and the partner console. Live at udyam.openforge.online. ' + (REPO ? 'Code and tests: ' + REPO.replace(/^https?:\/\//, '') + '.' : 'Code: github.com/sujalbhatu/udyam-digital (private; shared with the jury on request).'), { placeholder: 'sub' })
   s.addImage({ path: IMG('arch.png'), x: 0.6, y: 1.48, w: 8.8, h: 8.8 * 900 / 2400, altText: 'Architecture diagram of Accel Saathi' })
   txt(s, ([
     run('Prototype: ', { bold: true }), run('React + Vite PWA · FastAPI · SQLite, every record encrypted · RapidOCR (ONNX, CPU) · scikit-learn · WhatsApp Cloud API · Groq and Gemini. Runs on a 1 GB VM; the AI is optional.'),

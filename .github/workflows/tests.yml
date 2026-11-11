@@ -29,10 +29,12 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Search test (knowledge base, 10 languages)
         run: python -m tests.run_retrieval_eval
-      - name: Retrieval evaluation (83 owner questions, BM25 vs BM25 + expansion; report)
+      - name: Retrieval evaluation (three question sets, BM25 vs BM25 + expansion vs the hybrid search; fails if it slips)
         run: python -m tests.eval.run_rag_eval
       - name: Advisor scenarios
         run: python -m tests.run_advisor_scenarios
+      - name: Judge-style scenarios (50 owners typed the way people type, expectations worked out from the catalogue)
+        run: python -m tests.run_judge_scenarios
       - name: Language checks
         run: python -m tests.run_language_checks
       - name: Chat fixes (language switch, bad answers, "What?", "all of them", long selections)
@@ -41,6 +43,10 @@ jobs:
         run: python -m tests.run_ranking_eval
       - name: Privacy checks
         run: python -m tests.run_privacy_checks
+      - name: Security checks (only the built front end is served as files)
+        run: python -m tests.run_security_checks
+      - name: Red team (attacks typed into the chat, a model that misbehaves, API abuse)
+        run: python -m tests.run_red_team
       - name: WhatsApp orders
         run: python -m tests.run_whatsapp_orders
       - name: Partner flows

@@ -17,9 +17,9 @@ import json
 import logging
 import re
 
-from . import knowledge, llm, pains
+from . import guard, knowledge, llm, pains, store
 from .data import business_types, products
-from .extract import _NEED_KEYWORDS
+from .extract import need_keys
 from .i18n import LANGS, need_label, t
 from .recommender import _NEED_OF as _PID_OF_NEED, CONNECTIVITY, NEEDS
 
@@ -30,7 +30,7 @@ ACTIONS = ("none", "cheaper", "add", "remove", "term", "restart", "proceed", "tr
 # Questions the app answers itself with exact numbers from the rules engine (no AI needed for these), including the
 # moments a salesperson must handle well: "too expensive", "let me think", "which one do you recommend?".
 ASKS = ("ask_skip", "ask_term", "q_total", "q_down", "q_competitor", "q_privacy", "obj_price", "obj_think",
-        "obj_someone", "q_recommend", "q_unsure", "q_sites")
+        "obj_someone", "q_recommend", "q_unsure", "q_sites", "q_discount", "q_promise")
 _LLM_QUESTION = {"skip": "ask_skip", "term": "ask_term", "total": "q_total", "downtime": "q_down",
                  "competitor": "q_competitor", "safety": "q_privacy", "price": "obj_price", "think": "obj_think",
                  "recommend": "q_recommend", "unsure": "q_unsure", "outlets": "q_sites"}
@@ -265,7 +265,7 @@ def llm_understand(text: str, lang: str, stage: str, pending: str | None, profil
                    history: list[dict], intent: str | None = None, session: dict | None = None) -> dict | None:
     if not llm.available() or not llm.session_allowed(session):
         return None
-    found = knowledge.search(knowledge.expand(text, intent, needs_in(text)), k=4)
+    found = knowledge.find(text, intent, needs_in(text), k=4)
     kb = "\n".join(f"[{c['id']}] {c['title']}: {c['text']}" for c in found) or "(nothing matched)"
     focus = {c["id"].split("#")[1] for c in found if c["id"].startswith("product#")}
     if rec:
@@ -292,35 +292,19 @@ def llm_understand(text: str, lang: str, stage: str, pending: str | None, profil
            "sources": [c for c in data.get("sources") or [] if isinstance(c, str) and knowledge.by_id(c.strip("[]"))]}
     out["sources"] = [c.strip("[]") for c in out["sources"]][:3] if out["reply"] else []
     out["reply"] = re.sub(r"\s*\(?\bP\d{2}\b\)?", "", out["reply"]).strip()
-    if out["reply"] and not price_guard(out["reply"], rec):
-        log.warning("dropped an LLM answer that quoted a price not in the catalogue or quote")
+    why = guard.reply_problem(out["reply"], rec) if out["reply"] else None
+    if why:  # the model is not trusted: the app answers from its own rules instead
+        log.warning("dropped an LLM answer: it %s", why)
+        store.audit("advisor", "reply_blocked", (session or {}).get("id", ""), why[:80])
         out["reply"], out["sources"] = "", []
     return out
 
 
 # ---------- price guard ----------
 
-def _allowed_amounts(rec: dict | None) -> set[int]:
-    ok: set[int] = set()
-    for p in products().values():
-        ok |= {p.price_min, p.price_max, p.setup_fee}
-    if rec:
-        q = rec["quote"]
-        ok |= {q["monthly"], q["gst"], q["monthly_with_gst"], q["setup"]}
-        for l in q["lines"] + rec.get("suggested", []):
-            ok |= {l.get("monthly", 0), l.get("unit_price", 0), l.get("setup", 0)}
-        if rec.get("term_compare"):
-            ok.add(rec["term_compare"]["monthly"])
-    return ok
-
-
 def price_guard(reply: str, rec: dict | None) -> bool:
-    """True if every rupee amount in the reply exists in the catalogue or the current quote."""
-    pairs = re.findall(r"(?:₹|\brs\.?|\binr|rupees?)\s*([\d,]+)(?:\s*(?:-|–|‑|—|to)\s*(?:₹|rs\.?\s*)?([\d,]+))?",
-                       reply, flags=re.I)  # a range ("Rs 299-499") has its second amount checked too
-    amounts = [a for pair in pairs for a in pair if a.replace(",", "")]
-    allowed = _allowed_amounts(rec)
-    return all(int(a.replace(",", "")) in allowed for a in amounts)
+    """True if the reply may be shown: every amount is in the catalogue or the quote, and nothing else is off (guard.py)."""
+    return guard.reply_ok(reply, rec)
 
 
 # ---------- rules fallback ----------
@@ -352,7 +336,7 @@ _R = {
                  r"\bhack|ransomware|\bleak|dpdp|सुरक्षित|प्राइवेसी|डेटा सुरक्षा|தரவு பாதுகாப்பு|பாதுகாப்பான",
     "q_gst": r"(?:no|without|don'?t have|nahi|नहीं).{0,12}gst|gst.{0,12}(?:nahi|नहीं|not|why|kyu|क्यों|ज़रूरी|zaruri|needed|required)",
     "question": r"\?|\bwhat\b|\bwhy\b|\bhow\b|\bwhich\b|\bcan i\b|\bdo you\b|\bis it\b|\bkya\b|\bkyu|\bkaise\b|\bkaun|"
-                r"\bshould\b|\bdo i\b|\bdo we\b|क्या|क्यों|कैसे|कौन|काय|कसे|என்ன|ஏன்|எப்படி",
+                r"\bshould (?:i|we|it|my|our)\b|\bdo i\b|\bdo we\b|क्या|क्यों|कैसे|कौन|काय|कसे|என்ன|ஏன்|எப்படி",
     # "can I skip X?", "do I need X?", "is X necessary?": a question about removing, never the removal itself
     "ask_skip": r"\b(?:can|could|may|should|shall|must) (?:i|we) (?:skip|remove|drop|leave out|do without|not take|not have|"
                 r"avoid|go without|cancel)\b|\bdo (?:i|we) (?:really |actually |even )?(?:need|require|have to (?:take|keep|buy))\b|"
@@ -369,7 +353,7 @@ _R = {
     "term_words": r"contract|\bterm\b|lock-?in|commitment|कॉन्ट्रैक्ट|अनुबंध|ஒப்பந்த|\b12\b.{0,30}\b24\b|\b24\b.{0,30}\b12\b",
     "imperative": r"\b(?:switch|change|make|move|go|put|set|convert|shift)\b.{0,25}(?:12|24|one|two|1|2)\b|"
                   r"kar do|kardo|karo\b|kijiye|chahiye|please|pls|\bplz\b|कर दो|करो|कीजिए|चाहिए|करा\b|हवे",
-    "q_total": r"first (?:month|bill|payment|invoice)|total (?:cost|amount|price|bill|payable|monthly)|in total|altogether|"
+    "q_total": r"first (?:month|bill|payment|invoice)|total (?:cost|amount|price|bill|payable|monthly)|(?<!staff )(?<!people )(?<!employees )(?<!workers )(?<!members )(?<!persons )(?<!outlets )(?<!shops )(?<!branches )in total|altogether|"
                r"all[- ]inclusive|all-in|(?:with|including|incl\.?|after|plus) gst|gst (?:included|ke saath|milake|mila ke)|"
                r"grand total|upfront|pay (?:now|first|today)|how much (?:will|do|would) (?:i|we) (?:pay|have to pay)|"
                r"pehle mahine|pehla bill|kul kitna|total kitna|sab mila ?ke|सब मिलाकर|कुल|पहले महीने|पहला बिल|"
@@ -463,8 +447,7 @@ def _term(text: str) -> int | None:
 
 def needs_in(text: str) -> list[str]:
     """Services a message names, or that solve a problem it describes ("we had a theft" -> CCTV)."""
-    low = text.lower()
-    return sorted({k for k, pat in _NEED_KEYWORDS.items() if re.search(pat, low)} | set(pains.needs_for(pains.found(text))))
+    return sorted(need_keys(text) | set(pains.needs_for(pains.found(text))))
 
 
 def asks_only(text: str) -> bool:

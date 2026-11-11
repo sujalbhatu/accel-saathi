@@ -6,7 +6,7 @@ Rules win for hard facts they can read exactly (numbers, GSTIN, city); the LLM f
 import json
 import re
 
-from . import llm, pains
+from . import lexicon, llm, pains
 from .data import business_types, city_tiers
 from .recommender import NEEDS
 
@@ -15,8 +15,14 @@ from .recommender import NEEDS
 _DEVANAGARI = str.maketrans("०१२३४५६७८९০১২৩৪৫৬৭৮৯੦੧੨੩੪੫੬੭੮੯૦૧૨૩૪૫૬૭૮૯௦௧௨௩௪௫௬௭௮௯౦౧౨౩౪౫౬౭౮౯೦೧೨೩೪೫೬೭೮೯൦൧൨൩൪൫൬൭൮൯",
                             "0123456789" * 8)
 _WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9,
-          "ten": 10, "twelve": 12, "fifteen": 15, "twenty": 20, "ek": 1, "do": 2, "teen": 3, "char": 4,
-          "chaar": 4, "paanch": 5, "panch": 5, "chhe": 6, "saat": 7, "aath": 8, "das": 10, "बीस": 20,
+          "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14, "fifteen": 15, "sixteen": 16,
+          "seventeen": 17, "eighteen": 18, "nineteen": 19, "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50,
+          "sixty": 60, "hundred": 100, "ek": 1, "do": 2, "teen": 3, "char": 4,
+          "chaar": 4, "paanch": 5, "panch": 5, "chhe": 6, "chhah": 6, "che": 6, "saat": 7, "aath": 8, "nau": 9, "das": 10,
+          # "just the one" in the scripts: एकच दुकान, ఒకే క్లినిక్, ಒಂದೇ ಅಂಗಡಿ, একটাই ল্যাব
+          "एकच": 1, "एकही": 1, "ఒకే": 1, "ಒಂದೇ": 1, "একটাই": 1, "ஒரே": 1, "ഒരേ": 1, "ഒറ്റ": 1, "ਇੱਕੋ": 1,
+          "দুটো": 2, "দুটি": 2, "দুটা": 2, "তিনটে": 3, "তিনটি": 3, "চারটি": 4, "চারটে": 4, "পাঁচটি": 5, "पाचही": 5, "दोन्ही": 2,
+          "gyarah": 11, "barah": 12, "pandrah": 15, "bees": 20, "pachees": 25, "tees": 30, "pachas": 50, "बीस": 20,
           "एक": 1, "दो": 2, "तीन": 3, "चार": 4, "पांच": 5, "पाँच": 5, "छह": 6, "सात": 7, "आठ": 8, "दस": 10,
           # "one" to "five" in Tamil, Telugu, Kannada, Malayalam, Bengali, Gujarati, Punjabi, Marathi
           "ஒரு": 1, "ஒன்று": 1, "இரண்டு": 2, "மூன்று": 3, "நான்கு": 4, "ஐந்து": 5,
@@ -29,12 +35,22 @@ _WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven
           "दोन": 2, "पाच": 5}
 
 _PEOPLE = (r"(?:employees?|staff|people|persons?|workers?|members?|trainers?|teachers?|doctors?|nurses?|agents?|"
-           r"technicians?|engineers?|log|karmachari|कर्मचारी|लोग|लोक|पेर|பேர்|ஊழியர்|ಜನ|ಸಿಬ್ಬಂದಿ|જણ|લોકો|మంది|জন|ਲੋਕ|പേർ)")
+           r"technicians?|engineers?|helpers?|boys|ladke|karigars?|labou?rers?|assistants?|juniors?|partners?|associates?|"
+           r"ppl|lawyers?|advocates?|accountants?|girls|guys|mechanics?|cooks?|chefs?|waiters?|tailors?|stylists?|barbers?|"
+           r"pharmacists?|receptionists?|operators?|tutors?|faculty|salesm[ae]n|bande|"
+           r"log|karmachari|माणसे?|कामगार|માણસો?|કર્મચારીઓ?|কর্মী|কর্মচারী|ਕਾਮੇ|ਕਰਮਚਾਰੀ|ਬੰਦੇ|பணியாளர்கள்|பணியாளர்|ஆட்கள்|సిబ్బంది|ఉద్యోగులు|"
+           r"ನೌಕರರು|ಕೆಲಸಗಾರರು|ജീവനക്കാർ|ജോലിക്കാർ|തൊഴിലാളികൾ|कर्मचारी|लोग|लोक|पेर|பேர்|ஊழியர்|ಜನ|ಸಿಬ್ಬಂದಿ|જણ|લોકો|మంది|জন|ਲੋਕ|പേർ)")
 _SITES = (r"(?:sites?|branch(?:es)?|stores?|outlets?|shops?|locations?|clinics?|centres?|centers?|restaurants?|"
           r"hotels?|gyms?|schools?|factories|factory|plants?|units?|offices?|workshops?|labs?|studios?|warehouses?|"
           r"godowns?|showrooms?|propert(?:y|ies)|dukaan|dukan|शाखा|ब्रांच|दुकान|दुकानें|ठिकाणे|கிளை|கடை|"
           r"क्लिनिक|ऑफिस|ऑफ़िस|कार्यालय|शोरूम|स्टोर|फैक्ट्री|फ़ैक्ट्री|कारखाना|सेंटर|लैब|होटल|रेस्टोरेंट|स्कूल|गोदाम|"
           r"जिम|आउटलेट|यूनिट|प्लांट|அலுவலகம்|கிளினிக்)")
+
+# a place of business in the other scripts; these are stems, so "ಅಂಗಡಿಗಳು" (shops) matches "ಅಂಗಡಿ"
+_SITES_STEM = ("દુકાન|ઓફિસ|ક્લિનિક|ફેક્ટરી|શાખા|બ્રાન્ચ|দোকান|অফিস|ক্লিনিক|ল্যাব|কারখানা|শাখা|ব্রাঞ্চ|ਦੁਕਾਨ|ਦਫ਼ਤਰ|ਫੈਕਟਰੀ|ਕਲੀਨਿਕ|ਬ੍ਰਾਂਚ|ਸ਼ਾਖਾ|"
+               "தொழிற்சாலை|கடை|கிளை|దుకాణ|షాప్|క్లినిక్|ఆఫీస్|ఫ్యాక్టరీ|శాఖ|బ్రాంచ్|ಅಂಗಡಿ|ಕ್ಲಿನಿಕ್|ಕಚೇರಿ|ಆಫೀಸ್|ಫ್ಯಾಕ್ಟರಿ|ಶಾಖೆ|ಬ್ರಾಂಚ್|"
+               "കട|ഓഫീസ്|ക്ലിനിക്|ഫാക്ടറി|ശാഖ|ബ്രാഞ്ച്|दुकान|शाखा|युनिट|यूनिट")
+_GST_WORD = "जीएसटी|জিএসটি|જીએસટી|ਜੀਐਸਟੀ|ஜிஎஸ்டி|జీఎస్టీ|జిఎస్టి|ಜಿಎಸ್ಟಿ|ജിഎസ്ടി"
 
 # keyword -> canonical business_type from the leads data
 _BUSINESS_KEYWORDS = [
@@ -55,7 +71,7 @@ _BUSINESS_KEYWORDS = [
     (r"physio", "Physiotherapy clinic"),
     (r"diagnostic|pathology|lab\b", "Diagnostic lab"),
     (r"\bca\b|chartered accountant|accountant|ca firm|tax consult", "CA firm"),
-    (r"law|lawyer|advocate|legal|वकील", "Law office"),
+    (r"\blaw\b|lawyer|advocate|\blegal\b|वकील", "Law office"),
     (r"coaching|tuition|classes|institute|कोचिंग", "Coaching centre"),
     (r"insurance", "Insurance agency"),
     (r"architect|interior", "Architecture studio"),
@@ -64,7 +80,7 @@ _BUSINESS_KEYWORDS = [
     (r"restaurant|dhaba|cafe|caf[eé]|food court|रेस्टोरेंट|ढाबा", "Restaurant chain"),
     (r"hotel|lodge|guest ?house|stays|होटल", "Budget hotel group"),
     (r"gym|fitness", "Gym chain"),
-    (r"pre-?school|play ?school|kindergarten", "Pre-school chain"),
+    (r"pre[- ]?school|play[- ]?school|kindergarten|nursery school|montessori", "Pre-school chain"),
     (r"apparel|garment|clothing|fashion|कपड़े", "Apparel retail chain"),
     (r"electronics", "Electronics retail chain"),
     (r"auto ?parts|automobile|auto component", "Auto-parts unit"),
@@ -73,35 +89,56 @@ _BUSINESS_KEYWORDS = [
     (r"furniture|wood", "Furniture workshop"),
     (r"packaging|carton|corrugat", "Packaging unit"),
     (r"plastic|moulding|molding", "Plastic moulding unit"),
-    (r"print", "Printing press"),
+    (r"printing|\bprint(?:ers?)? (?:shop|press|unit|business)|\bprinters\b", "Printing press"),
     (r"clinic|doctor|hospital|nursing|क्लिनिक|डॉक्टर|மருத்துவ", "Clinic"),
-    (r"factory|manufactur|फ़ैक्टरी|फैक्टरी|कारखाना|தொழிற்சாலை", "Auto-parts unit"),
-    (r"shop|store|दुकान|கடை", "Kirana store"),
-]
+]  # a bare "shop" or "factory" is not on this list: the advisor asks what kind, it doesn't guess "kirana"
 _CHAIN_UPGRADE = {"Pharmacy": "Pharmacy chain", "Bakery": "Bakery chain", "Boutique": "Apparel retail chain"}
 
 _NEED_KEYWORDS = {
-    "payments": r"\bpos\b|billing|bill machine|upi|card payment|payments?|बिलिंग|पेमेंट",
+    "payments": r"\bpos\b|billing|bill machine|\bupi\b|card payment|payments?|बिलिंग|पेमेंट|(?:card|swipe|swiping|edc) machine|"
+                r"card swipe|accept cards?|\bqr code\b|\bpaytm\b|\bphonepe\b|\bgpay\b|google pay",
     "whatsapp": r"whats ?app|व्हाट्सएप|वॉट्सऐप",
     "sms": r"\bsms\b|text message|reminders?",
     "cctv": r"cctv|camera|surveillance|कैमरा|कॅमेरा|கேமரா|ক্যামেরা|કેમેરા|ಕ್ಯಾಮೆರಾ|ക്യാമറ|ਕੈਮਰਾ|కెమెరా",
     "email": r"e-?mail|gmail|domain mail|ईमेल",
     "security": r"antivirus|virus|ransomware|cyber|security|सुरक्षा",
-    "backup": r"\bbackup\b(?! (?:internet|line|connection))|cloud storage|storage|बैकअप",
+    "backup": r"\bbackup\b(?! (?:internet|line|connection))|cloud storage|(?<!cold )\bstorage\b",
     "website": r"website|online presence|वेबसाइट",
-    "guest_wifi": r"guest wi-?fi|customer wi-?fi|wi-?fi for (?:customers|guests|students|members)|free wi-?fi|(?:ग्राहक|ਗਾਹਕ|গ্রাহক|ગ્રાહક|ಗ್ರಾಹಕ|ഉപഭോക്താ|వినియోగదారు|கஸ்டமர்|வாடிக்கையாளர)\S*(?:\s+\S+){0,2}\s+wi-?fi",
+    "guest_wifi": r"guest wi-?fi|customer wi-?fi|wi-?fi for (?:customers|guests|students|members|clients|patients)|free wi-?fi|"
+                  r"(?:guests?|customers?|clients?|patients?|students?|members?|visitors?) (?:need|want|ask for|use|get|using) (?:our |the |my )?wi-?fi|"
+                  r"wi-?fi password (?:is |gets? )?shared|share(?:d|s)? (?:our |the |my )?wi-?fi password|(?:ग्राहक|ਗਾਹਕ|গ্রাহক|ગ્રાહક|ಗ್ರಾಹಕ|ഉപഭോക്താ|వినియోగదారు|கஸ்டமர்|வாடிக்கையாளர)\S*(?:\s+\S+){0,2}\s+wi-?fi",
     "failover": r"downtime|backup internet|internet (?:goes|went) down|failover|always on|uptime|नेट बंद",
     "calls": r"\bivr\b|phone lines?|landline|call recording|telephony|calls? (?:to|from) customers|call cent",
     "tollfree": r"toll ?free|1800",
-    "static_ip": r"static ip|remote access|fixed ip|server",
-    "iot": r"machine|sensor|iot|energy monitor|मशीन",
-    "fleet": r"vehicle|fleet|delivery (?:van|bike)s?|truck|gps|गाड़ी",
+    "static_ip": r"static ip|remote access|fixed ip|\bservers?\b",
+    "iot": r"(?<!card )(?<!bill )(?<!billing )(?<!swipe )(?<!pos )(?<!atm )\bmachines?\b|sensor|\biot\b|energy monitor",
+    "fleet": r"vehicle|fleet|delivery (?:van|bike|tempo|auto|boy)s?|\btrucks?\b|\btempos?\b|\blorr(?:y|ies)\b|\bgps\b|"
+             r"track (?:them|my (?:vans?|bikes?|drivers?|deliver\w+))",
     "central_mgmt": r"one bill|central(?:ly)?|all (?:branches|sites|outlets|stores)|single dashboard|manage .*from one",
     "firewall": r"firewall",
 }
-_NO_GST = r"no gst|without gst|not registered|gst nahi|gst नहीं|जीएसटी नहीं|gstin नहीं|don'?t have (?:a )?gst"
-_HAS_GST = (r"(?:have|has|with|got|are)\s+(?:a\s+|an\s+)?gst(?:in| number| registration)?\b|gst(?:in)?\s*(?:-|:)?\s*"
-            r"(?:registered|yes|hai|है|number hai|आहे|ಇದೆ|છે|ఉంది|আছে|ਹੈ|உள்ளது)|gst registered")
+for _k, _pat in lexicon.NEEDS.items():  # the same services named in the nine Indian scripts
+    _NEED_KEYWORDS[_k] += "|" + _pat
+for _i, (_pat, _bt) in enumerate(_BUSINESS_KEYWORDS):  # and the kinds of business; the first rule for a type gets its words
+    if _bt in lexicon.BUSINESS and not any(b == _bt for _, b in _BUSINESS_KEYWORDS[:_i]):
+        _BUSINESS_KEYWORDS[_i] = (_pat + "|" + lexicon.BUSINESS[_bt], _bt)
+assert {b for _, b in _BUSINESS_KEYWORDS} >= set(lexicon.BUSINESS), "a lexicon business type has no rule to join"
+
+
+def need_keys(text: str) -> set[str]:
+    """The services a message names, in any of the 10 languages ("billing machine" is payments, not machine monitoring)."""
+    low = lexicon.PAY_MACHINE.sub(" billing ", lexicon.plain(text).lower())
+    return {k for k, pat in _NEED_KEYWORDS.items() if re.search(pat, low)}
+_NO_GST = (r"no gst|without gst|not (?:gst )?registered|gst nahi|gst नहीं|gstin नहीं|don'?t have (?:a )?gst|"
+           r"gst(?:in)?\s*(?:-|:)?\s*(?:no\b|nope\b|not applicable|n/?a\b|nil\b)|"
+           r"gst(?:in)?\s*(?:number\s*|नंबर\s*)?(?:नहीं|नही|नाही|નથી|নেই|নাই|ਨਹੀਂ|இல்லை|లేదు|ಇಲ್ಲ|ഇല്ല)|"
+           # applied for but not received: no GSTIN yet, so nothing that needs one
+           r"gst(?:in)?(?: number| registration)?\s+(?:is\s+)?(?:applied|pending|awaited|in process|under process|not (?:yet )?received)|"
+           r"applied for (?:a |the )?gst|gst(?:in)?\s+(?:abhi\s+)?(?:aaya nahi|nahi aaya|nahi mila)")
+_HAS_GST = (r"(?:have|has|with|got|are)\s+(?:a\s+|an\s+)?gst(?:in| number| registration)?\b|"
+            r"(?:under|on)\s+(?:one|a|the same|a single|our)\s+gst(?:in)?\b|gst(?:in)?\s+(?:is\s+)?(?:available|there|done|ready)\b|"
+            r"gst(?:in)?\s*(?:-|:)?\s*"
+            r"(?:registered|yes|hai|है|number hai|आहे|ಇದೆ|છે|ఉంది|আছে|ਹੈ|உள்ளது|உண்டு|இருக்கு|ഉണ്ട്)|gst registered")
 _GSTIN = r"(?<![A-Z0-9])\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z](?![A-Z0-9])"
 _UDYAM = r"UDYAM-[A-Z]{2}-\d{2}-\d{7}"
 
@@ -110,6 +147,8 @@ _HINDI_CITIES = {"दिल्ली": "Delhi", "मुंबई": "Mumbai", "�
                  "जयपुर": "Jaipur", "लखनऊ": "Lucknow", "पटना": "Patna", "इंदौर": "Indore", "भोपाल": "Bhopal",
                  "नागपुर": "Nagpur", "नाशिक": "Nashik", "नासिक": "Nashik", "सूरत": "Surat", "वडोदरा": "Vadodara",
                  "लुधियाना": "Ludhiana", "कोच्चि": "Kochi", "சென்னை": "Chennai", "கோயம்புத்தூர்": "Coimbatore",
+                 "ಮೈಸೂರ": "Mysuru", "ಬೆಂಗಳೂರ": "Bengaluru", "கோயம்புத்தூர": "Coimbatore", "கோவை": "Coimbatore",
+                 "హైదరాబాద": "Hyderabad", "విశాఖ": "Visakhapatnam", "ਲੁਧਿਆਣ": "Ludhiana",
                  "bangalore": "Bengaluru", "bombay": "Mumbai", "calcutta": "Kolkata", "madras": "Chennai",
                  "baroda": "Vadodara", "vizag": "Visakhapatnam", "mysore": "Mysuru", "cochin": "Kochi",
                  "new delhi": "Delhi", "gurgaon": "Delhi", "noida": "Delhi",
@@ -127,14 +166,60 @@ def _num(s: str) -> int | None:
     return _WORDS.get(s)
 
 
+_NOT_TWO = {"how", "what", "why", "when", "where", "who", "i", "we", "you", "they", "to", "not", "can", "could", "should",
+            "would", "will", "please", "don't", "dont", "did", "and", "or", "that", "which", "really", "also", "then"}
+
+
+_BREAK = {"on", "in", "at", "the", "of", "for", "with", "from", "to", "per", "and", "plus", "is", "are", "has", "have", "by", "near"}
+
+
+def _count(m: re.Match, low: str) -> int | None:
+    """The number in a "<number> <people>" match. "do" is two in Hindi ("do log") but not in "how do people pay"."""
+    n = _num(m.group(1))
+    if n is not None and m.group(1) == "do":
+        before = low[:m.start()].split()
+        if not before or before[-1].strip(",.?!") in _NOT_TWO:
+            return None
+    return n
+
+
+def _sites(low: str) -> int | None:
+    """How many places: the number nearest before a word for a place, within the same phrase. In "fifteen people one
+    office" the office count is one; the fifteen belongs to the people."""
+    words = re.findall(r"[^\s,.;:!?()]+[,.;:!?]?", low)
+    for i, w in enumerate(words):
+        if not (re.fullmatch(_SITES, w.rstrip(",.;:!?")) or re.match(_SITES_STEM, w)):
+            continue
+        if i + 1 < len(words) and words[i + 1].rstrip(",.;:!?") in ("floor", "keeper", "keepers", "owner", "owners", "hours"):
+            continue  # "shop floor", "shop owner": not a count of shops
+        for j in range(i - 1, max(i - 4, -1), -1):
+            prev = words[j]
+            if prev[-1] in ",.;:!?" or re.fullmatch(_PEOPLE, prev) or prev in _BREAK:
+                break  # a new phrase ("55 on the shop floor"), or the number before this belongs to the people
+            n = _num(prev)
+            hindi = bool(re.fullmatch(r"dukaa?n\w*|shakha\w*|[^a-z]+", w.rstrip(",.;:!?")))  # "do dukaan" is always two
+            if n is not None and not (prev == "do" and not hindi and (j == 0 or words[j - 1].strip(",.?!") in _NOT_TWO)):
+                return n
+    return None
+
+
 def rules_extract(text: str) -> dict:
-    raw = text.translate(_DEVANAGARI)
+    raw = re.sub(lexicon.plain(_GST_WORD), "GST", lexicon.plain(text)).translate(_DEVANAGARI)
     low = raw.lower()
     out: dict = {}
     num = r"(\d+|[a-z\u0900-\u0DFF]+)"  # digits, or a number word in Latin or any Indian script
-    m = next((m for m in re.finditer(num + r"\s*\+?\s*" + _PEOPLE, low) if _num(m.group(1)) is not None), None)
-    if m:
-        out["employees"] = _num(m.group(1))
+    heads = [n for m in re.finditer(num + r"\s*[-+]?\s*" + _PEOPLE, low) if (n := _count(m, low)) is not None]
+    plus = re.search(r"\b(?:me|myself|main|mai|mein)\s*(?:and|n|&|\+|aur|plus)\s*(?:my\s+)?" + num + r"\s*" + _PEOPLE, low)
+    pair = re.search(r"\b(?:me|myself|i)\s*(?:and|n|&|\+)\s*my\s+(?:wife|husband|brother|sister|son|daughter|father|mother|partner|friend)\b", low)
+    summed = re.search(r"(\d+)\s*" + _PEOPLE + r"\s*(?:\+|&|and|plus|aur)\s*(\d+)\s*" + _PEOPLE, low)
+    if plus and _num(plus.group(1)) is not None:  # "me and 1 helper" is two people
+        out["employees"] = _num(plus.group(1)) + 1
+    elif pair:
+        out["employees"] = 2
+    elif summed:  # "3 partners + 4 juniors"
+        out["employees"] = int(summed.group(1)) + int(summed.group(2))
+    elif heads:
+        out["employees"] = heads[0]
     elif re.search(r"\b(?:just me|only me|myself only|by myself|alone|akela|sirf main|अकेला|अकेले)\b", low):
         out["employees"] = 1
     m = re.search(r"(?:team of|staff of)\s*(\d+)|(\d+|[a-z]+) of us\b|\bwe are (\d+)\b(?! ?(?:years?|yrs|km|%|branches|sites))", low)
@@ -142,11 +227,10 @@ def rules_extract(text: str) -> dict:
         n = _num(next(g for g in m.groups() if g))
         if n:
             out["employees"] = n
-    m = next((m for m in re.finditer(num + r"\s+(?:[a-z\u0900-\u097f-]+\s+){0,2}" + _SITES, low)
-              if _num(m.group(1)) is not None), None)
-    if m:
-        out["sites"] = _num(m.group(1))
-    elif re.search(r"(?:^|\s)(?:a|one|single|my|our|ek|एक|मेरी|मेरा|हमारी|माझे|माझी)\s+(?:\S+\s+)?" + _SITES, low):
+    sites = _sites(low)
+    if sites is not None:
+        out["sites"] = sites
+    elif re.search(r"(?:^|\s)(?:a|one|single|my|our|ek|एक|मेरी|मेरा|हमारी|माझे|माझी)\s+(?:[^\s,.;:!?]+\s+){0,3}" + _SITES + r"\b", low):
         out["sites"] = 1
     for pat, bt in _BUSINESS_KEYWORDS:
         if re.search(pat, low):
@@ -180,7 +264,7 @@ def rules_extract(text: str) -> dict:
     u = re.search(_UDYAM, raw.upper())
     if u:
         out["udyam"] = u.group(0)
-    needs = {k for k, pat in _NEED_KEYWORDS.items() if re.search(pat, low)}
+    needs = need_keys(text)
     told = pains.found(text)
     if told:  # "we had a theft" -> CCTV; "UPI fails at rush hour" -> billing + backup internet
         out["pains"] = told
@@ -195,12 +279,16 @@ def rules_extract(text: str) -> dict:
         out["budget"] = int(m.group(1).replace(",", ""))
     if re.search(r"no fib(?:re|er)|fib(?:re|er) (?:not|isn'?t) available|no cable", low):
         out["fibre_available"] = False
-    for k, pat in (("cameras", r"(\d+)\s*(?:cctv )?cameras?"), ("mobile_lines", r"(\d+)\s*(?:sims?|mobile|phones?|lines)"),
-                   ("vehicles", r"(\d+)\s*(?:vehicles?|vans?|trucks?|bikes?)"), ("machines", r"(\d+)\s*machines?"),
+    for k, pat in (("cameras", r"(\d+)\s*(?:[a-z-]+\s+)?cameras?"), ("mobile_lines", r"(\d+)\s*(?:sims?|mobile|phones?|lines)"),
+                   ("vehicles", r"(\d+)\s*(?:delivery\s+)?(?:vehicles?|vans?|trucks?|bikes?|tempos?|autos?|lorr(?:y|ies)|scooters?)"), ("machines", r"(\d+)\s*(?:[a-z-]+\s+)?machines?"),
                    ("counters", r"(\d+)\s*(?:counters?|billing counters?)"), ("users", r"(\d+)\s*(?:email|users)")):
         m = re.search(pat, low)
         if m:
             out.setdefault("counts", {})[k] = int(m.group(1))
+    if out.get("employees") and "users" not in out.get("counts", {}) and re.search(
+            r"(?:e-?mail|laptops?|computers?|antivirus)\b.{0,25}\b(?:everyone|everybody|all (?:the )?(?:staff|employees|of us)|"
+            r"each (?:person|employee|one)|whole team|sab ?ke liye|sabhi)", low):
+        out.setdefault("counts", {})["users"] = out["employees"]  # "email for everyone" is a seat each, not the usual share
     return out
 
 
